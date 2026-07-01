@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: backend-springboot
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+
+server:
+  port: 8080
