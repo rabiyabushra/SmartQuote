@@ -1,0 +1,313 @@
+.profile-page {
+  padding: 24px 28px 40px;
+  background: #f9fafb;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+// ---------- Profile header ----------
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+
+  .avatar-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+
+    .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .avatar-placeholder {
+        color: #9ca3af;
+        font-size: 28px;
+      }
+    }
+
+    .change-logo-btn {
+      font-size: 11px;
+      color: #374151;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 3px 8px;
+      cursor: pointer;
+      background: #fff;
+
+      &:hover {
+        background: #f3f4f6;
+      }
+    }
+  }
+
+  .name-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .business-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .owner-name {
+      font-size: 13px;
+      color: #6b7280;
+    }
+  }
+
+  .settings-btn {
+    color: #6b7280;
+  }
+}
+
+// ---------- Reusable inline-edit row ----------
+.editable-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .field-value {
+    font-size: 14px;
+    color: #111827;
+  }
+
+  .field-value.multiline {
+    white-space: pre-wrap;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .edit-btn {
+    color: #9ca3af;
+    width: 28px;
+    height: 28px;
+
+    &.small mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &:hover {
+      color: #1a56db;
+    }
+  }
+
+  .inline-field {
+    width: 100%;
+    margin: 0;
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+      padding-top: 0;
+    }
+  }
+
+  .inline-field.full {
+    max-width: 320px;
+  }
+}
+
+.textarea-row .inline-field.full {
+  max-width: 100%;
+}
+
+.title-row {
+  margin-bottom: 2px;
+}
+
+// ---------- Company Information ----------
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+  padding: 18px 20px;
+  border-top: none;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 18px;
+    bottom: 18px;
+    left: 50%;
+    width: 1px;
+    background: #e5e7eb;
+  }
+
+  .info-col {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  letter-spacing: 0.3px;
+  margin-top: 10px;
+  margin-bottom: 2px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+// ---------- Quotation Template Information ----------
+.template-section {
+  padding: 18px 20px 8px;
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.template-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:hover {
+    border-color: #93b4f5;
+  }
+
+  &.selected {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 1px #22c55e;
+  }
+
+  .template-thumb {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    background: #f3f4f6;
+    border-radius: 6px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .check-icon {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      color: #22c55e;
+      background: #fff;
+      border-radius: 50%;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      z-index: 1;
+    }
+  }
+
+  .template-name {
+    font-size: 12px;
+    color: #374151;
+  }
+}
+
+.text-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+  padding: 8px 20px 20px;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    bottom: 20px;
+    left: 50%;
+    width: 1px;
+    background: #e5e7eb;
+  }
+
+  .text-col {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+// ---------- Responsive ----------
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 16px;
+  }
+
+  .info-grid,
+  .text-grid {
+    grid-template-columns: 1fr;
+
+    &::before {
+      display: none;
+    }
+  }
+
+  .template-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .profile-header {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .template-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
