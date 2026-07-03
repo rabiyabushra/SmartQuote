@@ -17,7 +17,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 import { DashboardStats, QuotationStatus, QuotationSummary } from '../../../core/models/quotation.model';
 import { QuotationSearchFilterComponent } from '../../quotation/quotation-search-filter/quotation-search-filter.component';
-
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -37,7 +38,9 @@ import { QuotationSearchFilterComponent } from '../../quotation/quotation-search
     MatTooltipModule,
     MatBadgeModule,
     MatPaginatorModule,
-    QuotationSearchFilterComponent
+    QuotationSearchFilterComponent,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -52,6 +55,10 @@ export class DashboardComponent {
   totalCount = signal(128);
   showFilterDrawer = signal(false);
   searchControl = this.fb.control('');
+  dateRange = this.fb.group({
+    start: [null],
+    end: [null]
+  });
 
   activeFilters = signal<{ label: string; key: string }[]>([
     { label: 'Draft', key: 'status:Draft' },

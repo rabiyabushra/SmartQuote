@@ -69,10 +69,32 @@
       Filter
     </button>
 
-    <button mat-stroked-button class="date-range-btn">
-      <mat-icon>calendar_today</mat-icon>
-      Mar 01 – Mar 31, 2026
-    </button>
+    <mat-form-field appearance="outline" class="date-range-field">
+
+      <mat-date-range-input
+        [formGroup]="dateRange"
+        [rangePicker]="picker">
+
+        <input
+          matStartDate
+          formControlName="start"
+          placeholder="Start Date">
+
+        <input
+          matEndDate
+          formControlName="end"
+          placeholder="End Date">
+
+      </mat-date-range-input>
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker">
+      </mat-datepicker-toggle>
+
+      <mat-date-range-picker #picker></mat-date-range-picker>
+
+    </mat-form-field>
 
     <mat-form-field appearance="outline" class="sort-field">
       <mat-select value="newest">
