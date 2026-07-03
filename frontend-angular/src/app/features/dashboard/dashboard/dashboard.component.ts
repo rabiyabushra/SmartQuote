@@ -16,6 +16,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 import { DashboardStats, QuotationStatus, QuotationSummary } from '../../../core/models/quotation.model';
+import { QuotationSearchFilterComponent } from '../../quotation/quotation-search-filter/quotation-search-filter.component';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -34,7 +36,8 @@ import { DashboardStats, QuotationStatus, QuotationSummary } from '../../../core
     MatButtonToggleModule,
     MatTooltipModule,
     MatBadgeModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    QuotationSearchFilterComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -47,7 +50,7 @@ export class DashboardComponent {
   pageIndex = signal(0);
   pageSize = 6;
   totalCount = signal(128);
-
+  showFilterDrawer = signal(false);
   searchControl = this.fb.control('');
 
   activeFilters = signal<{ label: string; key: string }[]>([
@@ -130,6 +133,20 @@ export class DashboardComponent {
     this.searchControl.setValue('');
     // TODO: re-fetch quotations with cleared filters
   }
+openFilterDrawer(): void {
+  this.showFilterDrawer.set(true);
+}
+
+closeFilterDrawer(): void {
+  this.showFilterDrawer.set(false);
+}
+
+applyFilters(filters: any): void {
+  console.log('Applied Filters:', filters);
+
+  // Later this will call the backend
+  // this.quotationService.getQuotations(filters);
+}
 
   setView(mode: 'card' | 'table'): void {
     this.view.set(mode);

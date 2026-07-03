@@ -56,7 +56,15 @@
       <input matInput placeholder="Search Customers..." [formControl]="searchControl" />
     </mat-form-field>
 
-    <button mat-stroked-button class="filter-btn" [matBadge]="activeFilters().length" matBadgeSize="small" matBadgeColor="warn" [matBadgeHidden]="activeFilters().length === 0">
+    <button
+      mat-stroked-button
+      class="filter-btn"
+      (click)="openFilterDrawer()"
+      [matBadge]="activeFilters().length"
+      matBadgeSize="small"
+      matBadgeColor="warn"
+      [matBadgeHidden]="activeFilters().length === 0">
+
       <mat-icon>filter_list</mat-icon>
       Filter
     </button>
@@ -203,4 +211,9 @@
     <p>⚠ Red follow-up date = overdue or due today · Tooltip on hover shows full details</p>
     <p>Toggle between Card view and Table view using the icon group in the toolbar (top-right of filter row)</p>
   </section>
+  <app-quotation-search-filter
+    [isOpen]="showFilterDrawer()"
+    (closed)="closeFilterDrawer()"
+    (apply)="applyFilters($event)">
+  </app-quotation-search-filter>
 </div>
