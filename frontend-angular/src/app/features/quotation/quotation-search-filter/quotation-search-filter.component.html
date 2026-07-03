@@ -1,0 +1,190 @@
+<!-- Backdrop -->
+<div class="filter-backdrop" *ngIf="isOpen" (click)="onClose()"></div>
+
+<!-- Drawer -->
+<aside class="filter-drawer" [class.open]="isOpen">
+
+  <!-- Sticky header -->
+  <header class="drawer-header">
+    <div class="header-left">
+      <mat-icon>filter_list</mat-icon>
+      <span class="header-title">Filter Quotations</span>
+      <span class="active-badge" *ngIf="activeFilterCount() > 0">
+        {{ activeFilterCount() }} Filter{{ activeFilterCount() > 1 ? 's' : '' }} Active
+      </span>
+    </div>
+    <button mat-icon-button (click)="onClose()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <!-- Scrollable body -->
+  <div class="drawer-body">
+
+    <!-- Customer Name -->
+    <section class="filter-section">
+      <label class="section-label">Customer Name</label>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Search by customer name..."
+          [ngModel]="filters().customerName"
+          (ngModelChange)="updateCustomerName($event)" />
+      </mat-form-field>
+    </section>
+
+    <!-- Status -->
+    <section class="filter-section">
+      <label class="section-label">Status</label>
+      <div class="chip-row">
+        <button
+          type="button"
+          class="filter-chip"
+          *ngFor="let status of statusOptions"
+          [class.selected]="isStatusSelected(status)"
+          (click)="toggleStatus(status)">
+          {{ status }}
+        </button>
+      </div>
+      <span class="hint-text">* Multi-select allowed</span>
+    </section>
+
+    <!-- Date Created -->
+    <section class="filter-section">
+      <label class="section-label">Date Created</label>
+      <div class="chip-row">
+        <button type="button" class="filter-chip" [class.selected]="filters().dateCreatedPreset === 'today'" (click)="setDateCreatedPreset('today')">Today</button>
+        <button type="button" class="filter-chip" [class.selected]="filters().dateCreatedPreset === 'thisWeek'" (click)="setDateCreatedPreset('thisWeek')">This Week</button>
+        <button type="button" class="filter-chip" [class.selected]="filters().dateCreatedPreset === 'thisMonth'" (click)="setDateCreatedPreset('thisMonth')">This Month</button>
+        <button type="button" class="filter-chip" [class.selected]="filters().dateCreatedPreset === 'custom'" (click)="setDateCreatedPreset('custom')">Custom Range</button>
+      </div>
+
+      <div class="date-range-row">
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>From</mat-label>
+          <input matInput [matDatepicker]="fromPicker" [ngModel]="filters().dateFrom" (ngModelChange)="updateDateFrom($event)" />
+          <mat-datepicker-toggle matIconSuffix [for]="fromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fromPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>To</mat-label>
+          <input matInput [matDatepicker]="toPicker" [ngModel]="filters().dateTo" (ngModelChange)="updateDateTo($event)" />
+          <mat-datepicker-toggle matIconSuffix [for]="toPicker"></mat-datepicker-toggle>
+          <mat-datepicker #toPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <!-- Sort By -->
+    <section class="filter-section">
+      <label class="section-label">Sort By</label>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-select
+          [ngModel]="filters().sortBy"
+          (ngModelChange)="updateSortBy($event)">
+          <mat-option value="newest">Newest First</mat-option>
+          <mat-option value="oldest">Oldest First</mat-option>
+          <mat-option value="followup">Follow-up Date</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </section>
+
+    <!-- City & State -->
+    <section class="filter-section">
+      <label class="section-label">City &amp; State</label>
+      <div class="two-col-row">
+        <mat-form-field appearance="outline">
+          <mat-label>City</mat-label>
+          <input
+            matInput
+            placeholder="e.g. Mumbai"
+            [ngModel]="filters().city"
+            (ngModelChange)="updateCity($event)" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>State</mat-label>
+          <mat-select
+            [ngModel]="filters().state"
+            (ngModelChange)="updateState($event)">
+            <mat-option *ngFor="let state of stateOptions" [value]="state">{{ state }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <span class="quick-select-label">Quick select</span>
+      <div class="chip-row">
+        <button
+          type="button"
+          class="filter-chip small"
+          *ngFor="let state of stateOptions"
+          [class.selected]="filters().state === state"
+          (click)="quickSelectState(state)">
+          {{ state }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Employee -->
+    <section class="filter-section">
+      <label class="section-label">Employee (Quote Created By)</label>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-select placeholder="Select employee">
+          <mat-option
+            *ngFor="let emp of employeeOptions"
+            [value]="emp.id"
+            (click)="toggleEmployee(emp.id)">
+            {{ emp.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="chip-row" *ngIf="filters().employeeIds.length > 0">
+        <span class="selected-chip" *ngFor="let id of filters().employeeIds">
+          {{ employeeName(id) }}
+          <mat-icon (click)="toggleEmployee(id)">close</mat-icon>
+        </span>
+      </div>
+    </section>
+
+    <!-- Follow-up Date -->
+    <section class="filter-section">
+      <label class="section-label">Follow-up Date</label>
+      <div class="chip-row">
+        <button type="button" class="filter-chip" [class.selected]="filters().followUpPreset === 'overdue'" (click)="setFollowUpPreset('overdue')">Overdue</button>
+        <button type="button" class="filter-chip" [class.selected]="filters().followUpPreset === 'thisWeek'" (click)="setFollowUpPreset('thisWeek')">This Week</button>
+        <button type="button" class="filter-chip" [class.selected]="filters().followUpPreset === 'custom'" (click)="setFollowUpPreset('custom')">Custom Date</button>
+      </div>
+
+      <div class="date-range-row">
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>From</mat-label>
+          <input matInput [matDatepicker]="followFromPicker" placeholder="DD/MM/YYYY" [ngModel]="filters().followUpFrom" (ngModelChange)="updateFollowUpFrom($event)" />
+          <mat-datepicker-toggle matIconSuffix [for]="followFromPicker"></mat-datepicker-toggle>
+          <mat-datepicker #followFromPicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="date-field">
+          <mat-label>To</mat-label>
+          <input matInput [matDatepicker]="followToPicker" placeholder="DD/MM/YYYY" [ngModel]="filters().followUpTo" (ngModelChange)="updateFollowUpTo($event)" />
+          <mat-datepicker-toggle matIconSuffix [for]="followToPicker"></mat-datepicker-toggle>
+          <mat-datepicker #followToPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </section>
+  </div>
+
+  <!-- Sticky footer -->
+  <footer class="drawer-footer">
+    <button mat-stroked-button class="clear-btn" (click)="onClearFilters()">
+      <mat-icon>close</mat-icon>
+      Clear Filters
+    </button>
+    <button mat-flat-button color="primary" class="apply-btn" (click)="onApply()">
+      Show Results
+      <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+    </button>
+  </footer>
+</aside>

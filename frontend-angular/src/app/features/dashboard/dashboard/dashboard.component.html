@@ -1,0 +1,241 @@
+<div class="dashboard-page">
+
+  <!-- Top bar -->
+  <header class="top-bar">
+    <div class="brand">
+      <mat-icon class="brand-icon">assignment</mat-icon>
+      <span class="brand-name">Smart Quotation Builder</span>
+    </div>
+
+    <div class="top-bar-actions">
+      <button mat-icon-button [routerLink]="['/profile']" matTooltip="Profile">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <button mat-flat-button color="primary" class="new-quotation-btn" (click)="onNewQuotation()">
+        <mat-icon>add</mat-icon>
+        New Quotation
+      </button>
+      <button mat-icon-button matTooltip="Sign out">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Stats row -->
+  <section class="stats-row">
+    <div class="stat-card">
+      <span class="stat-label">Total Quotations</span>
+      <span class="stat-value">{{ stats().totalQuotations }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Draft</span>
+      <span class="stat-value">{{ stats().draft }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Sent</span>
+      <span class="stat-value">{{ stats().sent }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Accepted</span>
+      <span class="stat-value">{{ stats().accepted }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">In Negotiation</span>
+      <span class="stat-value">{{ stats().inNegotiation }}</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Not Converted</span>
+      <span class="stat-value">{{ stats().notConverted }}</span>
+    </div>
+  </section>
+
+  <!-- Filter row -->
+  <section class="filter-row">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput placeholder="Search Customers..." [formControl]="searchControl" />
+    </mat-form-field>
+
+    <button
+      mat-stroked-button
+      class="filter-btn"
+      (click)="openFilterDrawer()"
+      [matBadge]="activeFilters().length"
+      matBadgeSize="small"
+      matBadgeColor="warn"
+      [matBadgeHidden]="activeFilters().length === 0">
+
+      <mat-icon>filter_list</mat-icon>
+      Filter
+    </button>
+
+    <mat-form-field appearance="outline" class="date-range-field">
+
+      <mat-date-range-input
+        [formGroup]="dateRange"
+        [rangePicker]="picker">
+
+        <input
+          matStartDate
+          formControlName="start"
+          placeholder="Start Date">
+
+        <input
+          matEndDate
+          formControlName="end"
+          placeholder="End Date">
+
+      </mat-date-range-input>
+
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker">
+      </mat-datepicker-toggle>
+
+      <mat-date-range-picker #picker></mat-date-range-picker>
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sort-field">
+      <mat-select value="newest">
+        <mat-option value="newest">Sort: Newest</mat-option>
+        <mat-option value="oldest">Sort: Oldest</mat-option>
+        <mat-option value="followup">Sort: Follow-up date</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-button-toggle-group class="view-toggle" [value]="view()">
+      <mat-button-toggle value="card" (click)="setView('card')" matTooltip="Card view">
+        <mat-icon>grid_view</mat-icon>
+      </mat-button-toggle>
+      <mat-button-toggle value="table" (click)="setView('table')" matTooltip="Table view">
+        <mat-icon>view_list</mat-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+  </section>
+
+  <!-- Active filter chips -->
+  <section class="active-filters" *ngIf="activeFilters().length > 0">
+    <mat-chip-set>
+      <mat-chip *ngFor="let filter of activeFilters()" (removed)="removeFilter(filter.key)">
+        {{ filter.label }}
+        <button matChipRemove>
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+    </mat-chip-set>
+    <button mat-button class="clear-all-btn" (click)="clearAllFilters()">Clear all</button>
+  </section>
+
+  <!-- Quotation cards -->
+  <section class="quotation-grid" *ngIf="view() === 'card'">
+    <div class="quotation-card" *ngFor="let q of quotations()" [ngClass]="statusColor(q.status)">
+      <div class="card-top-bar"></div>
+
+      <div class="card-header">
+        <div class="customer-info">
+          <span class="customer-name">{{ q.customerName }}</span>
+          <span class="customer-contact">{{ q.contactNumber }} · {{ q.email }}</span>
+        </div>
+        <div class="header-right">
+          <span class="status-badge" [ngClass]="statusColor(q.status)">{{ q.status }}</span>
+          <button mat-icon-button [matMenuTriggerFor]="cardMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #cardMenu="matMenu">
+            <button mat-menu-item [routerLink]="['/quotations', q.id, 'edit']">Edit</button>
+            <button mat-menu-item>Share</button>
+            <button mat-menu-item class="delete-item">Delete</button>
+          </mat-menu>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="detail-col">
+          <span class="detail-label">QUOTE ID</span>
+          <span class="detail-value strong">{{ q.quoteId }}</span>
+        </div>
+        <div class="detail-col">
+          <span class="detail-label">EMPLOYEE</span>
+          <span class="detail-value">{{ q.employeeName }}</span>
+        </div>
+        <div class="detail-col">
+          <span class="detail-label">CITY / STATE</span>
+          <span class="detail-value">{{ q.city }}, {{ q.state }}</span>
+        </div>
+        <div class="detail-col">
+          <span class="detail-label">DATE CREATED</span>
+          <span class="detail-value">{{ q.dateCreated | date: 'MMM d, y' }}</span>
+        </div>
+      </div>
+
+      <div class="follow-up-row" [class.overdue]="q.isFollowUpOverdue">
+        <span class="detail-label">FOLLOW-UP</span>
+        <span class="follow-up-value">
+          {{ q.followUpDate ? (q.followUpDate | date: 'MMM d, y') : '—' }}
+          <mat-icon *ngIf="q.isFollowUpOverdue" class="overdue-icon" matTooltip="Follow-up overdue">warning</mat-icon>
+        </span>
+      </div>
+
+      <div class="card-actions">
+        <button mat-stroked-button [matMenuTriggerFor]="statusMenu" class="status-btn">
+          Status <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+        </button>
+        <mat-menu #statusMenu="matMenu">
+          <button mat-menu-item>Draft</button>
+          <button mat-menu-item>Sent to Customer</button>
+          <button mat-menu-item>Accepted</button>
+          <button mat-menu-item>In Negotiation</button>
+          <button mat-menu-item>Not Converted</button>
+          <button mat-menu-item>Converted</button>
+        </mat-menu>
+
+        <span class="action-icons">
+          <button mat-icon-button matTooltip="View" (click)="onViewQuotation(q.id)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Download" (click)="onDownloadQuotation(q.id)">
+            <mat-icon>file_download</mat-icon>
+          </button>
+          <button mat-icon-button [matMenuTriggerFor]="cardMenu" matTooltip="More options">
+            <mat-icon>more_horiz</mat-icon>
+          </button>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Table view placeholder -->
+  <section class="quotation-table" *ngIf="view() === 'table'">
+    <p class="table-placeholder">Table view — build with mat-table once card view is confirmed with the team.</p>
+  </section>
+
+  <!-- Pagination -->
+  <footer class="pagination-footer">
+    <span class="results-count">
+      Showing {{ rangeStart() }}–{{ rangeEnd() }} of {{ totalCount() }} quotations
+    </span>
+    <mat-paginator
+      [length]="totalCount()"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[6, 12, 24]"
+      [pageIndex]="pageIndex()"
+      (page)="onPageChange($event)"
+      hidePageSize>
+    </mat-paginator>
+  </footer>
+
+  <!-- Card anatomy guide (dev reference from wireframe — remove before ship) -->
+  <section class="anatomy-guide">
+    <strong>CARD ANATOMY GUIDE</strong>
+    <p>Coloured top bar = status indicator. Each card shows: Customer name + contact · Quote ID · Status badge · Employee · City / State · Date Created · Follow-up date.</p>
+    <p>Actions per card: [Status ▾ change] [👁 View] [⬇ Download] [⋯ More options — edit, delete, share]</p>
+    <p>⚠ Red follow-up date = overdue or due today · Tooltip on hover shows full details</p>
+    <p>Toggle between Card view and Table view using the icon group in the toolbar (top-right of filter row)</p>
+  </section>
+  <app-quotation-search-filter
+    [isOpen]="showFilterDrawer()"
+    (closed)="closeFilterDrawer()"
+    (apply)="applyFilters($event)">
+  </app-quotation-search-filter>
+</div>
