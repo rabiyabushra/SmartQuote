@@ -1,0 +1,154 @@
+.sign-up-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #e8f0fe 0%, #f5f8ff 100%);
+}
+
+.sign-up-card {
+  width: 100%;
+  max-width: 440px;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  background: #f8fafc;
+
+  .brand-icon {
+    background: #6b7280;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .brand-tagline {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+}
+
+.sign-up-panel {
+  padding: 24px 24px 20px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+  margin-top: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.submit-btn {
+  height: 48px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-spinner {
+  display: inline-block;
+  ::ng-deep circle {
+    stroke: #fff;
+  }
+}
+
+.footer-links {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: #374151;
+
+  .sign-in-link {
+    color: #1a56db;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-left: 4px;
+
+    &:hover {
+      color: #143f9e;
+    }
+  }
+}
+
+@media (max-width: 380px) {
+  .sign-up-panel {
+    padding: 20px 18px 16px;
+  }
+
+  .brand {
+    padding: 16px 18px;
+  }
+}
+.divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 24px 0 16px;
+}
+.submit-btn {
+  transition: transform 0.2s ease;
+}
+
+.submit-btn:hover {
+  transform: translateY(-2px);
+}
+.sign-up-card {
+  transition: transform 0.25s ease,
+              box-shadow 0.25s ease;
+}
+
+.sign-up-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,0,0,.12);
+}
