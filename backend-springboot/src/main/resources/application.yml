@@ -4,6 +4,23 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 
 server:
   port: 8080
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+
+storage:
+  local:
+    base-dir: ./storage
+  base-url: http://localhost:8080/files
+
+whisper:
+  api:
+    key: ${WHISPER_API_KEY:}
