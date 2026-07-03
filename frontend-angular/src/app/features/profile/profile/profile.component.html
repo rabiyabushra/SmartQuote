@@ -1,0 +1,220 @@
+<div class="profile-page">
+
+  <!-- Profile section -->
+  <section class="panel">
+    <div class="panel-title">Profile</div>
+
+    <div class="profile-header">
+      <div class="avatar-block">
+        <div class="avatar">
+          <img *ngIf="profile().logoUrl" [src]="profile().logoUrl" alt="Business logo" />
+          <mat-icon *ngIf="!profile().logoUrl" class="avatar-placeholder">business</mat-icon>
+        </div>
+        <label class="change-logo-btn">
+          Change Logo
+          <input type="file" accept="image/*" hidden (change)="onLogoFileSelected($event)" />
+        </label>
+      </div>
+
+      <div class="name-block">
+        <!-- Business name (inline editable) -->
+        <div class="editable-row title-row">
+          <ng-container *ngIf="!isEditing('businessName')">
+            <span class="business-name">{{ profile().businessName }}</span>
+            <button mat-icon-button class="edit-btn" (click)="startEdit('businessName')" matTooltip="Edit business name">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field" *ngIf="isEditing('businessName')">
+            <input
+              matInput
+              #businessNameInput
+              [value]="profile().businessName"
+              (keydown.enter)="saveEdit('businessName', businessNameInput.value)"
+              (keydown.escape)="cancelEdit('businessName')"
+              (blur)="saveEdit('businessName', businessNameInput.value)" />
+          </mat-form-field>
+        </div>
+
+        <!-- Owner name (inline editable) -->
+        <div class="editable-row">
+          <ng-container *ngIf="!isEditing('ownerName')">
+            <span class="owner-name">{{ profile().ownerName }}</span>
+            <button mat-icon-button class="edit-btn small" (click)="startEdit('ownerName')" matTooltip="Edit owner name">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field" *ngIf="isEditing('ownerName')">
+            <input
+              matInput
+              #ownerNameInput
+              [value]="profile().ownerName"
+              (keydown.enter)="saveEdit('ownerName', ownerNameInput.value)"
+              (keydown.escape)="cancelEdit('ownerName')"
+              (blur)="saveEdit('ownerName', ownerNameInput.value)" />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <button mat-icon-button class="settings-btn" (click)="openAccountSettings()" matTooltip="Account settings">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+  </section>
+
+  <!-- Company Information -->
+  <section class="panel">
+    <div class="panel-title">Company Information</div>
+
+    <div class="info-grid">
+      <div class="info-col">
+        <label class="field-label">Email</label>
+        <div class="editable-row">
+          <ng-container *ngIf="!isEditing('email')">
+            <span class="field-value">{{ profile().email }}</span>
+            <button mat-icon-button class="edit-btn small" (click)="startEdit('email')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field full" *ngIf="isEditing('email')">
+            <input
+              matInput
+              type="email"
+              #emailInput
+              [value]="profile().email"
+              (keydown.enter)="saveEdit('email', emailInput.value)"
+              (keydown.escape)="cancelEdit('email')"
+              (blur)="saveEdit('email', emailInput.value)" />
+          </mat-form-field>
+        </div>
+
+        <label class="field-label">Contact Number</label>
+        <div class="editable-row">
+          <ng-container *ngIf="!isEditing('contactNumber')">
+            <span class="field-value">{{ profile().contactNumber }}</span>
+            <button mat-icon-button class="edit-btn small" (click)="startEdit('contactNumber')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field full" *ngIf="isEditing('contactNumber')">
+            <input
+              matInput
+              type="tel"
+              #contactInput
+              [value]="profile().contactNumber"
+              (keydown.enter)="saveEdit('contactNumber', contactInput.value)"
+              (keydown.escape)="cancelEdit('contactNumber')"
+              (blur)="saveEdit('contactNumber', contactInput.value)" />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="info-col">
+        <label class="field-label">GSTIN</label>
+        <div class="editable-row">
+          <ng-container *ngIf="!isEditing('gstin')">
+            <span class="field-value">{{ profile().gstin }}</span>
+            <button mat-icon-button class="edit-btn small" (click)="startEdit('gstin')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field full" *ngIf="isEditing('gstin')">
+            <input
+              matInput
+              #gstinInput
+              [value]="profile().gstin"
+              (keydown.enter)="saveEdit('gstin', gstinInput.value)"
+              (keydown.escape)="cancelEdit('gstin')"
+              (blur)="saveEdit('gstin', gstinInput.value)" />
+          </mat-form-field>
+        </div>
+
+        <label class="field-label">Address</label>
+        <div class="editable-row">
+          <ng-container *ngIf="!isEditing('address')">
+            <span class="field-value">{{ profile().address }}</span>
+            <button mat-icon-button class="edit-btn small" (click)="startEdit('address')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field full" *ngIf="isEditing('address')">
+            <input
+              matInput
+              #addressInput
+              [value]="profile().address"
+              (keydown.enter)="saveEdit('address', addressInput.value)"
+              (keydown.escape)="cancelEdit('address')"
+              (blur)="saveEdit('address', addressInput.value)" />
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quotation Template Information -->
+  <section class="panel">
+    <div class="panel-title">Quotation Template Information</div>
+
+    <div class="template-section">
+      <label class="field-label">Template Selection</label>
+      <div class="template-grid">
+        <button
+          type="button"
+          class="template-card"
+          *ngFor="let template of templates"
+          [class.selected]="profile().selectedTemplateId === template.id"
+          (click)="selectTemplate(template.id)">
+          <div class="template-thumb">
+            <mat-icon *ngIf="profile().selectedTemplateId === template.id" class="check-icon">check_circle</mat-icon>
+            <img [src]="template.thumbnailUrl" [alt]="template.name" />
+          </div>
+          <span class="template-name">{{ template.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="text-grid">
+      <div class="text-col">
+        <label class="field-label">Terms &amp; Conditions</label>
+        <div class="editable-row textarea-row">
+          <ng-container *ngIf="!isEditing('termsAndConditions')">
+            <p class="field-value multiline">{{ profile().termsAndConditions }}</p>
+            <button mat-icon-button class="edit-btn small" (click)="startEdit('termsAndConditions')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field full" *ngIf="isEditing('termsAndConditions')">
+            <textarea
+              matInput
+              rows="5"
+              #termsInput
+              [value]="profile().termsAndConditions"
+              (keydown.escape)="cancelEdit('termsAndConditions')"
+              (blur)="saveEdit('termsAndConditions', termsInput.value)"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="text-col">
+        <label class="field-label">Footer Notes</label>
+        <div class="editable-row textarea-row">
+          <ng-container *ngIf="!isEditing('footerNotes')">
+            <p class="field-value multiline">{{ profile().footerNotes }}</p>
+            <button mat-icon-button class="edit-btn small" (click)="startEdit('footerNotes')">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <mat-form-field appearance="outline" class="inline-field full" *ngIf="isEditing('footerNotes')">
+            <textarea
+              matInput
+              rows="5"
+              #footerInput
+              [value]="profile().footerNotes"
+              (keydown.escape)="cancelEdit('footerNotes')"
+              (blur)="saveEdit('footerNotes', footerInput.value)"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
