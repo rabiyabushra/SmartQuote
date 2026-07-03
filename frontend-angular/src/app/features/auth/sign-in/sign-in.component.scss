@@ -1,0 +1,173 @@
+.sign-in-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: linear-gradient(135deg, #e8f0fe 0%, #f5f8ff 100%);
+}
+
+.sign-in-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+// Header block
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 24px;
+  background: #f4f5f7;
+
+  .brand-icon {
+    background: #6b7280;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .brand-tagline {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
+}
+
+.sign-in-panel {
+  padding: 24px 24px 20px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.submit-btn {
+  height: 48px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.5px;
+}
+.submit-btn:hover{
+    transform:translateY(-1px);
+}
+
+.btn-spinner {
+  display: inline-block;
+  ::ng-deep circle {
+    stroke: #fff;
+  }
+}
+
+.forgot-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #1a56db;
+  text-decoration: underline;
+
+  &:hover {
+    color: #143f9e;
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 16px;
+
+  .line {
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+  }
+
+  .divider-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+  }
+}
+
+.footer-links {
+  text-align: center;
+  font-size: 13px;
+  color: #374151;
+
+  .create-account-link {
+    color: #1a56db;
+    font-weight: 600;
+    text-decoration: underline;
+    margin-left: 4px;
+
+    &:hover {
+      color: #143f9e;
+    }
+  }
+}
+
+// Responsive: small phones
+@media (max-width: 380px) {
+  .sign-in-panel {
+    padding: 20px 18px 16px;
+  }
+
+  .brand {
+    padding: 16px 18px;
+  }
+}
+.sign-in-card{
+
+transition:0.3s;
+
+}
+.sign-in-card:hover{
+
+transform:translateY(-2px);
+
+}
