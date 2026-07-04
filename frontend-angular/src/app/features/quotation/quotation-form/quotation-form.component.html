@@ -1,1 +1,14 @@
-<p>quotation-form works!</p>
+<div class="quotation-form-page">
+  <a routerLink="/quotations" class="back-link">← Back to Quotations</a>
+
+  <ng-container [ngSwitch]="templateId()">
+    <app-job-work-quotation-form *ngSwitchCase="'job-work'" />
+    <app-fabrication-quotation-form *ngSwitchCase="'fabrication'" />
+    <app-supply-quotation-form *ngSwitchCase="'supply'" />
+    <app-service-quotation-form *ngSwitchCase="'service'" />
+    <app-maintenance-quotation-form *ngSwitchCase="'maintenance'" />
+    <p *ngSwitchDefault class="no-template">
+      No template selected. <a routerLink="/quotations">Go back</a> and start a new quotation to choose one.
+    </p>
+  </ng-container>
+</div>

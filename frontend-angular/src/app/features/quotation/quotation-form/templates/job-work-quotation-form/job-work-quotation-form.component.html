@@ -1,0 +1,152 @@
+<form [formGroup]="form" class="quote-doc">
+
+  <!-- Doc header -->
+  <div class="doc-header">
+    <div class="business-block">
+      <div class="logo-box"></div>
+      <div class="business-text">
+        <h1>{{ businessInfo().businessName }}</h1>
+        <p>{{ businessInfo().streetAddress }}</p>
+        <p>{{ businessInfo().cityPostal }}</p>
+        <p>GSTIN: {{ businessInfo().gstin }}</p>
+        <p>Contact: {{ businessInfo().contact }}</p>
+      </div>
+    </div>
+
+    <div class="doc-title-block">
+      <h2 class="doc-title">QUOTE</h2>
+      <table class="meta-table">
+        <tr><td>Quote #</td><td>{{ form.value.quoteNumber }}</td></tr>
+        <tr><td>Date</td><td>{{ form.value.quoteDate | date: 'MM/dd/yyyy' }}</td></tr>
+        <tr><td>GSTIN</td><td>{{ form.value.gstin }}</td></tr>
+        <tr>
+          <td>Valid Until</td>
+          <td>
+            <mat-form-field appearance="outline" class="meta-field">
+              <input matInput [matDatepicker]="validPicker" formControlName="validUntil" placeholder="Select date" />
+              <mat-datepicker-toggle matIconSuffix [for]="validPicker"></mat-datepicker-toggle>
+              <mat-datepicker #validPicker></mat-datepicker>
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-bar">JOB WORK QUOTATION</div>
+
+  <!-- To -->
+  <div class="to-block">
+    <span class="to-label">To:</span>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Customer Name" formControlName="customerName" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Customer Address" formControlName="customerAddress" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Contact Number" formControlName="contactNumber" />
+    </mat-form-field>
+  </div>
+
+  <!-- Scope of Job Work -->
+  <div class="boxed-section">
+    <div class="boxed-title">Scope of Job Work:</div>
+    <mat-form-field appearance="outline" class="full-width">
+      <textarea matInput rows="3" formControlName="scopeOfJobWork" placeholder="One bullet per line"></textarea>
+    </mat-form-field>
+  </div>
+
+  <!-- Material Supplied By -->
+  <div class="boxed-section">
+    <div class="boxed-title">Material Supplied By</div>
+    <mat-radio-group formControlName="materialSuppliedBy" class="radio-row">
+      <mat-radio-button value="client">Client</mat-radio-button>
+      <mat-radio-button value="vendor">Vendor</mat-radio-button>
+      <mat-radio-button value="other">Other:</mat-radio-button>
+    </mat-radio-group>
+    <mat-form-field appearance="outline" class="inline-small" *ngIf="form.get('materialSuppliedBy')?.value === 'other'">
+      <input matInput formControlName="materialSuppliedByOther" />
+    </mat-form-field>
+
+    <div class="two-col-row">
+      <mat-form-field appearance="outline">
+        <mat-label>Material Grade</mat-label>
+        <input matInput formControlName="materialGrade" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Material Quantity Received</mat-label>
+        <input matInput formControlName="materialQuantityReceived" />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Job Work items -->
+  <div class="table-title">Job Work</div>
+  <table class="item-table" formArrayName="items">
+    <thead>
+    <tr>
+      <th class="col-sl">Sl No</th>
+      <th>Description</th>
+      <th class="col-sac">SAC Code</th>
+      <th class="col-qty">Qty</th>
+      <th class="col-rate">Rate</th>
+      <th class="col-amount">Amount</th>
+      <th class="col-action"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let row of items.controls; let i = index" [formGroupName]="i">
+      <td>{{ i + 1 }}</td>
+      <td><input matInput formControlName="description" placeholder="e.g. Skilled Labour" /></td>
+      <td><input matInput formControlName="sacCode" placeholder="998732" /></td>
+      <td><input matInput type="number" formControlName="qty" /></td>
+      <td><input matInput type="number" formControlName="rate" /></td>
+      <td class="amount-cell">{{ rowAmount(i) | number: '1.2-2' }}</td>
+      <td>
+        <button mat-icon-button type="button" (click)="removeItem(i)" [disabled]="items.length === 1">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <button mat-stroked-button type="button" class="add-row-btn" (click)="addItem()">
+    <mat-icon>add</mat-icon> Add Line Item
+  </button>
+
+  <!-- Totals -->
+  <table class="totals-table">
+    <tr><td>Subtotal</td><td>{{ taxSummary().subtotal | number: '1.2-2' }}</td></tr>
+    <tr><td>CGST &#64; 9.0%</td><td>{{ taxSummary().cgst | number: '1.2-2' }}</td></tr>
+    <tr><td>SGST &#64; 9.0%</td><td>{{ taxSummary().sgst | number: '1.2-2' }}</td></tr>
+    <tr class="grand-total"><td>TOTAL</td><td>{{ taxSummary().total | number: '1.2-2' }}</td></tr>
+  </table>
+
+  <!-- Terms -->
+  <div class="boxed-section">
+    <div class="boxed-title">Terms and Conditions:</div>
+    <mat-form-field appearance="outline" class="full-width">
+      <textarea matInput rows="4" formControlName="termsAndConditions" placeholder="One term per line"></textarea>
+    </mat-form-field>
+  </div>
+
+  <p class="footer-note">
+    If you have any questions about this job work quotation, please contact {{ businessInfo().businessName }}.
+    Phone {{ businessInfo().contact }}
+  </p>
+  <p class="thank-you">Thank You For Your Business!</p>
+
+  <div class="signature-row">
+    <div class="signature-block">
+      <p>For {{ businessInfo().businessName }}</p>
+      <div class="sig-line"></div>
+      <p>Authorized Signatory</p>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button mat-stroked-button type="button" (click)="saveDraft()">Save as Draft</button>
+    <button mat-flat-button color="primary" type="button" (click)="saveAndPreview()">Save &amp; Preview</button>
+  </div>
+</form>
