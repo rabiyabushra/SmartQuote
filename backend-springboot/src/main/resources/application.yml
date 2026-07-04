@@ -1,9 +1,15 @@
 spring:
   application:
     name: backend-springboot
+  config:
+    import: optional:file:../.env[.properties]
   data:
     mongodb:
       uri: ${MONGODB_URI}
+  servlet:
+    multipart:
+      max-file-size: 25MB
+      max-request-size: 25MB
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
@@ -11,6 +17,36 @@ spring:
 server:
   port: 8080
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+smartquote:
+  voice:
+    max-audio-size-bytes: 26214400
+    allowed-content-types:
+      - audio/webm
+      - audio/ogg
+      - audio/wav
+      - audio/x-wav
+      - audio/mpeg
+      - audio/mp3
+      - audio/mp4
+      - audio/x-m4a
+      - video/webm
+      - application/octet-stream
+  whisper:
+    api-key: ${WHISPER_API_KEY:}
+    api-url: https://api.openai.com/v1/audio/transcriptions
+    model: whisper-1
+    language: en
+    connect-timeout-ms: 10000
+    read-timeout-ms: 120000
+    max-retries: 3
+    retry-backoff-ms: 1000
+    rate-limit-retry-after-seconds: 60
 app:
   cors:
     allowed-origins:
