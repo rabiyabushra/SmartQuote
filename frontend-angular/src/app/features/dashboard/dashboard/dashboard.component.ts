@@ -26,6 +26,9 @@ import { TemplatePickerDialogComponent } from '../../templates/template-gallery/
 
 import { QuotationTemplateId } from '../../../core/models/quotation-template.model';
 
+import { QuotationService } from '../../../core/services/quotation.service';
+
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -56,6 +59,7 @@ export class DashboardComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private quotationService = inject(QuotationService);
 
   view = signal<'card' | 'table'>('card');
   pageIndex = signal(0);
@@ -83,45 +87,8 @@ export class DashboardComponent {
     notConverted: 7
   });
 
-  // TODO: replace with QuotationService.getQuotations(filters, page)
-  quotations = signal<QuotationSummary[]>([
-    {
-      id: '1', quoteId: 'QT-2026-0041', customerName: 'Rajesh Mehta',
-      contactNumber: '+91 98765 43210', email: 'rajesh@email.com',
-      status: 'Draft', employeeName: 'Amit Sharma', city: 'Mumbai', state: 'MH',
-      dateCreated: new Date('2026-03-01'), followUpDate: new Date('2026-03-08'), isFollowUpOverdue: true
-    },
-    {
-      id: '2', quoteId: 'QT-2026-0040', customerName: 'Priya Nair',
-      contactNumber: '+91 91234 56789', email: 'priya@email.com',
-      status: 'Sent to Customer', employeeName: 'Sneha Iyer', city: 'Bangalore', state: 'KA',
-      dateCreated: new Date('2026-02-28'), followUpDate: new Date('2026-03-10'), isFollowUpOverdue: false
-    },
-    {
-      id: '3', quoteId: 'QT-2026-0039', customerName: 'Vikram Patel',
-      contactNumber: '+91 87654 32109', email: 'vikram@email.com',
-      status: 'In Negotiation', employeeName: 'Ravi Kumar', city: 'Delhi', state: 'DL',
-      dateCreated: new Date('2026-02-25'), followUpDate: new Date('2026-03-05'), isFollowUpOverdue: true
-    },
-    {
-      id: '4', quoteId: 'QT-2026-0038', customerName: 'Sunita Kapoor',
-      contactNumber: '+91 76543 21098', email: 'sunita@email.com',
-      status: 'Converted', employeeName: 'Deepa Rao', city: 'Hyderabad', state: 'TS',
-      dateCreated: new Date('2026-02-22'), followUpDate: new Date('2026-03-01'), isFollowUpOverdue: false
-    },
-    {
-      id: '5', quoteId: 'QT-2026-0037', customerName: 'Anand Verma',
-      contactNumber: '+91 65432 10987', email: 'anand@email.com',
-      status: 'Not Converted', employeeName: 'Amit Sharma', city: 'Chennai', state: 'TN',
-      dateCreated: new Date('2026-02-20'), followUpDate: null, isFollowUpOverdue: false
-    },
-    {
-      id: '6', quoteId: 'QT-2026-0036', customerName: 'Geeta Singh',
-      contactNumber: '+91 54321 09876', email: 'geeta@email.com',
-      status: 'Draft', employeeName: 'Sneha Iyer', city: 'Pune', state: 'MH',
-      dateCreated: new Date('2026-02-18'), followUpDate: new Date('2026-03-06'), isFollowUpOverdue: true
-    }
-  ]);
+ // REPLACE the old hardcoded `quotations = signal<QuotationSummary[]>([...])` block with:
+quotations = this.quotationService.quotations;
 
   rangeStart = signal(1);
   rangeEnd = computed(() => Math.min(this.rangeStart() + this.pageSize - 1, this.totalCount()));

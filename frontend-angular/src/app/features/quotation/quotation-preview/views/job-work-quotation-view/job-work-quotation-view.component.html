@@ -1,0 +1,92 @@
+<div class="quote-doc">
+  <div class="doc-header">
+    <div class="business-block">
+      <div class="logo-box"></div>
+      <div class="business-text">
+        <h1>{{ businessInfo().businessName }}</h1>
+        <p>{{ businessInfo().streetAddress }}</p>
+        <p>{{ businessInfo().cityPostal }}</p>
+        <p>GSTIN: {{ businessInfo().gstin }}</p>
+        <p>Contact: {{ businessInfo().contact }}</p>
+      </div>
+    </div>
+    <div class="doc-title-block">
+      <h2 class="doc-title">QUOTE</h2>
+      <table class="meta-table">
+        <tr><td>Quote #</td><td>{{ data?.quoteNumber }}</td></tr>
+        <tr><td>Date</td><td>{{ data?.quoteDate | date: 'MM/dd/yyyy' }}</td></tr>
+        <tr><td>GSTIN</td><td>{{ data?.gstin }}</td></tr>
+        <tr><td>Valid Until</td><td>{{ data?.validUntil | date: 'MM/dd/yyyy' }}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-bar">JOB WORK QUOTATION</div>
+
+  <div class="to-block">
+    <span class="to-label">To:</span>
+    <p>{{ data?.customerName }}</p>
+    <p>{{ data?.customerAddress }}</p>
+    <p>{{ data?.contactNumber }}</p>
+  </div>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Scope of Job Work:</div>
+    <p class="static-text">{{ data?.scopeOfJobWork }}</p>
+  </div>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Material Supplied By</div>
+    <p>
+      {{ data?.materialSuppliedBy }}
+      <span *ngIf="data?.materialSuppliedByOther">({{ data?.materialSuppliedByOther }})</span>
+    </p>
+    <div class="two-col-row">
+      <p><strong>Material Grade:</strong> {{ data?.materialGrade || '—' }}</p>
+      <p><strong>Material Quantity Received:</strong> {{ data?.materialQuantityReceived || '—' }}</p>
+    </div>
+  </div>
+
+  <div class="table-title">Job Work</div>
+  <table class="item-table">
+    <thead>
+      <tr>
+        <th class="col-sl">Sl No</th><th>Description</th><th class="col-sac">SAC Code</th>
+        <th class="col-qty">Qty</th><th class="col-rate">Rate</th><th class="col-amount">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of items(); let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ row.description }}</td>
+        <td>{{ row.sacCode }}</td>
+        <td>{{ row.qty }}</td>
+        <td>{{ row.rate | number: '1.2-2' }}</td>
+        <td class="amount-cell">{{ rowAmount(row) | number: '1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="totals-table">
+    <tr><td>Subtotal</td><td>{{ taxSummary().subtotal | number: '1.2-2' }}</td></tr>
+    <tr><td>CGST &#64; 9.0%</td><td>{{ taxSummary().cgst | number: '1.2-2' }}</td></tr>
+    <tr><td>SGST &#64; 9.0%</td><td>{{ taxSummary().sgst | number: '1.2-2' }}</td></tr>
+    <tr class="grand-total"><td>TOTAL</td><td>{{ taxSummary().total | number: '1.2-2' }}</td></tr>
+  </table>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Terms and Conditions:</div>
+    <p class="static-text">{{ data?.termsAndConditions }}</p>
+  </div>
+
+  <p class="footer-note">If you have any questions about this job work quotation, please contact {{ businessInfo().businessName }}. Phone {{ businessInfo().contact }}</p>
+  <p class="thank-you">Thank You For Your Business!</p>
+
+  <div class="signature-row">
+    <div class="signature-block">
+      <p>For {{ businessInfo().businessName }}</p>
+      <div class="sig-line"></div>
+      <p>Authorized Signatory</p>
+    </div>
+  </div>
+</div>

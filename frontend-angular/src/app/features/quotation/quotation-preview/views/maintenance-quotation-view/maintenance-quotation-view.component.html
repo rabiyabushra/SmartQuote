@@ -1,0 +1,87 @@
+<div class="quote-doc">
+  <div class="doc-header">
+    <div class="business-block">
+      <div class="logo-box"></div>
+      <div class="business-text">
+        <h1>{{ businessInfo().businessName }}</h1>
+        <p>{{ businessInfo().streetAddress }}</p>
+        <p>{{ businessInfo().cityPostal }}</p>
+        <p>GSTIN: {{ businessInfo().gstin }}</p>
+        <p>Contact: {{ businessInfo().contact }}</p>
+      </div>
+    </div>
+    <div class="doc-title-block">
+      <h2 class="doc-title">QUOTE</h2>
+      <table class="meta-table">
+        <tr><td>Quote #</td><td>{{ data?.quoteNumber }}</td></tr>
+        <tr><td>Date</td><td>{{ data?.quoteDate | date: 'MM/dd/yyyy' }}</td></tr>
+        <tr><td>Valid Until</td><td>{{ data?.validUntil | date: 'MM/dd/yyyy' }}</td></tr>
+        <tr><td>Payment Terms</td><td>{{ data?.paymentTermsShort || '—' }}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-bar">MAINTENANCE QUOTATION</div>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Project / Site Details</div>
+    <div class="project-grid">
+      <p><strong>Project Name:</strong> {{ data?.projectName || '—' }}</p>
+      <p><strong>Client Name:</strong> {{ data?.clientName || '—' }}</p>
+      <p><strong>Site Location:</strong> {{ data?.siteLocation || '—' }}</p>
+      <p><strong>Address:</strong> {{ data?.address || '—' }}</p>
+      <p><strong>Client Contact:</strong> {{ data?.clientContact || '—' }}</p>
+      <p><strong>Phone:</strong> {{ data?.phone || '—' }}</p>
+      <p><strong>Scope Reference:</strong> {{ data?.scopeReference || '—' }}</p>
+      <p><strong>Email:</strong> {{ data?.email || '—' }}</p>
+    </div>
+    <p><strong>Subject:</strong> {{ data?.subject || '—' }}</p>
+  </div>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Scope of Work:</div>
+    <p class="static-text">{{ data?.scopeOfWork }}</p>
+  </div>
+
+  <div class="table-title">Work Items Details</div>
+  <table class="item-table">
+    <thead>
+      <tr><th class="col-sl">Item No.</th><th>Work Description</th><th class="col-rate">Unit</th><th class="col-qty">Qty</th><th class="col-rate">Unit Rate</th><th class="col-rate">Tax %</th><th class="col-amount">Amount</th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of items(); let i = index">
+        <td>{{ i + 1 }}</td><td>{{ row.description }}</td><td>{{ row.unit }}</td>
+        <td>{{ row.qty }}</td><td>{{ row.unitRate | number: '1.2-2' }}</td><td>{{ row.taxPercent }}%</td>
+        <td class="amount-cell">{{ rowAmount(row) | number: '1.2-2' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="totals-table">
+    <tr><td>Subtotal</td><td>{{ taxSummary().subtotal | number: '1.2-2' }}</td></tr>
+    <tr><td>CGST &#64; 9%</td><td>{{ taxSummary().cgst | number: '1.2-2' }}</td></tr>
+    <tr><td>SGST &#64; 9%</td><td>{{ taxSummary().sgst | number: '1.2-2' }}</td></tr>
+    <tr class="grand-total"><td>TOTAL</td><td>{{ taxSummary().total | number: '1.2-2' }}</td></tr>
+  </table>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Payment Terms</div>
+    <p class="static-text">{{ data?.paymentTerms }}</p>
+  </div>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Terms &amp; Conditions:</div>
+    <p class="static-text">{{ data?.termsAndConditions }}</p>
+  </div>
+
+  <p class="footer-note">If you have any questions about this service quotation, please contact us. Phone {{ businessInfo().contact }}</p>
+  <p class="thank-you">Thank You For Your Business!</p>
+
+  <div class="signature-row">
+    <div class="signature-block">
+      <p>For {{ businessInfo().businessName }}</p>
+      <div class="sig-line"></div>
+      <p>Authorized Signatory</p>
+    </div>
+  </div>
+</div>

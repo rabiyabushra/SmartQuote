@@ -11,7 +11,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { calculateTax, round2 } from '../../../core/utils/quotation-tax.util';
+import { QuotationService } from '../../../../../core/services/quotation.service';
+import { calculateTax, round2 } from '../../../../../core/utils/quotation-tax.util';
 
 @Component({
   selector: 'app-service-quotation-form',
@@ -22,12 +23,14 @@ import { calculateTax, round2 } from '../../../core/utils/quotation-tax.util';
     MatDatepickerModule, MatNativeDateModule, MatSnackBarModule
   ],
   templateUrl: './service-quotation-form.component.html',
-  styleUrls: ['../quotation-document-shared.scss', './service-quotation-form.component.scss']
+  styleUrls: ['../../quotation-document-shared.scss', './service-quotation-form.component.scss']
 })
 export class ServiceQuotationFormComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+
+  private quotationService = inject(QuotationService);
 
   businessInfo = signal({
     businessName: 'Sharma Fabrication Works',

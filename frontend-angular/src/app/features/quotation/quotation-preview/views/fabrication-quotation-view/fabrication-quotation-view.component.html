@@ -1,0 +1,89 @@
+<div class="quote-doc">
+  <div class="doc-header">
+    <div class="business-block">
+      <div class="logo-box"></div>
+      <div class="business-text">
+        <h1>{{ businessInfo().businessName }}</h1>
+        <p>{{ businessInfo().streetAddress }}</p>
+        <p>{{ businessInfo().cityPostal }}</p>
+        <p>GSTIN: {{ businessInfo().gstin }}</p>
+        <p>Contact: {{ businessInfo().contact }}</p>
+      </div>
+    </div>
+    <div class="doc-title-block">
+      <h2 class="doc-title">QUOTE</h2>
+      <table class="meta-table">
+        <tr><td>Quote #</td><td>{{ data?.quoteNumber }}</td></tr>
+        <tr><td>Date</td><td>{{ data?.quoteDate | date: 'MM/dd/yyyy' }}</td></tr>
+        <tr><td>Valid Until</td><td>{{ data?.validUntil | date: 'MM/dd/yyyy' }}</td></tr>
+        <tr><td>GSTIN</td><td>{{ data?.gstin }}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-bar">FABRICATION WORK QUOTATION</div>
+
+  <div class="to-block">
+    <span class="to-label">To:</span>
+    <p>{{ data?.customerName }}</p>
+    <p>{{ data?.customerAddress }}</p>
+    <p>Contact Person: {{ data?.contactPerson || '—' }}</p>
+    <p>Job Ref No: {{ data?.jobRefNo || '—' }}</p>
+    <p>Contact: {{ data?.contact || '—' }}</p>
+    <p>Email: {{ data?.email || '—' }}</p>
+  </div>
+
+  <div class="table-block">
+    <div class="table-title">Material / Products</div>
+    <table class="item-table">
+      <thead>
+        <tr><th class="col-sl">Sl No</th><th>Description</th><th class="col-qty">QTY</th><th class="col-rate">Price</th><th class="col-rate">CGST (%)</th><th class="col-amount">Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of materialItems(); let i = index">
+          <td>{{ i + 1 }}</td><td>{{ row.description }}</td><td>{{ row.qty }}</td>
+          <td>{{ row.price | number: '1.2-2' }}</td><td>{{ row.cgstPercent }}%</td>
+          <td class="amount-cell">{{ rowAmount(row) | number: '1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-total-row">Total: {{ materialTotal() | number: '1.2-2' }}</div>
+  </div>
+
+  <div class="table-block">
+    <div class="table-title">Labor</div>
+    <table class="item-table">
+      <thead>
+        <tr><th class="col-sl">Sl No</th><th>Description</th><th class="col-qty">Hours</th><th class="col-rate">Price / Hour</th><th class="col-rate">CGST (%)</th><th class="col-amount">Amount</th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of laborItems(); let i = index">
+          <td>{{ i + 1 }}</td><td>{{ row.description }}</td><td>{{ row.qty }}</td>
+          <td>{{ row.price | number: '1.2-2' }}</td><td>{{ row.cgstPercent }}%</td>
+          <td class="amount-cell">{{ rowAmount(row) | number: '1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="table-total-row">Total: {{ laborTotal() | number: '1.2-2' }}</div>
+  </div>
+
+  <table class="totals-table">
+    <tr class="grand-total"><td>GRAND TOTAL</td><td>{{ grandTotal() | number: '1.2-2' }}</td></tr>
+  </table>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Terms &amp; Conditions:</div>
+    <p class="static-text">{{ data?.termsAndConditions }}</p>
+  </div>
+
+  <p class="footer-note">If you have any questions about this quote, please contact us. Phone {{ businessInfo().contact }}</p>
+  <p class="thank-you">Thank You For Your Business!</p>
+
+  <div class="signature-row">
+    <div class="signature-block">
+      <p>For {{ businessInfo().businessName }}</p>
+      <div class="sig-line"></div>
+      <p>Authorized Signatory</p>
+    </div>
+  </div>
+</div>

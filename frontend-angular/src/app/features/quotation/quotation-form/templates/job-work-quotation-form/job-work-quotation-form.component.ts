@@ -13,6 +13,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { calculateTax } from '../../../../../core/utils/quotation-tax.util';
+import { QuotationService } from '../../../../../core/services/quotation.service';
 
 @Component({
   selector: 'app-job-work-quotation-form',
@@ -29,6 +30,7 @@ export class JobWorkQuotationFormComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private quotationService = inject(QuotationService);
 
   // TODO: replace with BusinessService.getProfile()
   businessInfo = signal({
@@ -108,19 +110,19 @@ export class JobWorkQuotationFormComponent {
   }
 
   saveDraft(): void {
-    // TODO: QuotationService.saveDraft({ templateId: 'job-work', ...this.form.value })
-    this.snackBar.open('Saved as draft', 'OK', { duration: 2000 });
-    this.router.navigate(['/quotations']);
-  }
+  const id = this.quotationService.create('job-work', this.form.value); // match template ID per file
+  this.snackBar.open('Saved as draft', 'OK', { duration: 2000 });
+  this.router.navigate(['/quotations']);
+}
 
   saveAndPreview(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.snackBar.open('Please fill all required fields', 'OK', { duration: 2500 });
-      return;
-    }
-    // TODO: QuotationService.create({ templateId: 'job-work', ...this.form.value })
-    this.snackBar.open('Quotation saved', 'OK', { duration: 2000 });
-    this.router.navigate(['/quotations']);
+  if (this.form.invalid) {
+    this.form.markAllAsTouched();
+    this.snackBar.open('Please fill all required fields', 'OK', { duration: 2500 });
+    return;
   }
+  const id = this.quotationService.create('job-work', this.form.value); // 'fabrication' | 'supply' | 'service' | 'maintenance' in the other 4 files
+  this.snackBar.open('Quotation saved', 'OK', { duration: 2000 });
+  this.router.navigate(['/quotations', id, 'preview']);
+}
 }

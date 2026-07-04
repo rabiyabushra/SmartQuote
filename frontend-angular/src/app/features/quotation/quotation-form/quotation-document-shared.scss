@@ -313,3 +313,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+.static-text {
+  white-space: pre-wrap;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.item-table .static-cell {
+  text-align: center;
+  color: #6b7280;
+}

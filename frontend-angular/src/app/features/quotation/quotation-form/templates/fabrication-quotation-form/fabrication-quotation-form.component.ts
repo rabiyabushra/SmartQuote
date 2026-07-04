@@ -12,7 +12,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { round2 } from '../../../../../core/utils/quotation-tax.util';
-
+import { QuotationService } from '../../../../../core/services/quotation.service';
 @Component({
   selector: 'app-fabrication-quotation-form',
   standalone: true,
@@ -28,6 +28,7 @@ export class FabricationQuotationFormComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private quotationService = inject(QuotationService);
 
   // TODO: replace with BusinessService.getProfile()
   businessInfo = signal({
