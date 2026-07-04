@@ -1,0 +1,315 @@
+.quote-doc {
+  max-width: 850px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 32px 40px 48px;
+  font-size: 13px;
+  color: #1f2937;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+// ---------- Header ----------
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 2px solid #111827;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+
+  .business-block {
+    display: flex;
+    gap: 12px;
+
+    .logo-box {
+      width: 48px;
+      height: 48px;
+      border: 1px solid #9ca3af;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .business-text {
+      h1 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 2px;
+      }
+      p {
+        margin: 0;
+        font-size: 11px;
+        color: #4b5563;
+      }
+    }
+  }
+
+  .doc-title-block {
+    text-align: right;
+
+    .doc-title {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 0 0 8px;
+    }
+  }
+}
+
+.meta-table {
+  border-collapse: collapse;
+
+  td {
+    font-size: 11px;
+    padding: 3px 6px;
+    text-align: left;
+    vertical-align: middle;
+
+    &:first-child {
+      color: #6b7280;
+      white-space: nowrap;
+      padding-right: 10px;
+    }
+  }
+
+  .meta-field {
+    width: 130px;
+
+    ::ng-deep .mat-mdc-form-field-infix {
+      min-height: 32px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+  }
+}
+
+// ---------- Section bar ----------
+.section-bar {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+
+// ---------- To block ----------
+.to-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  .to-label {
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  .full-width {
+    width: 100%;
+    margin-bottom: -8px;
+  }
+}
+
+// ---------- Boxed sections ----------
+.boxed-section {
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+
+  .boxed-title {
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+
+  .full-width {
+    width: 100%;
+  }
+}
+
+.radio-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.inline-small {
+  width: 200px;
+  margin-bottom: 8px;
+}
+
+.two-col-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 20px;
+}
+
+.project-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 20px;
+}
+
+// ---------- Tables ----------
+.table-title {
+  font-weight: 700;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.item-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 8px;
+
+  th, td {
+    border: 1px solid #d1d5db;
+    padding: 6px 8px;
+    font-size: 12px;
+    text-align: left;
+  }
+
+  th {
+    background: #f3f4f6;
+    font-weight: 700;
+    font-size: 11px;
+  }
+
+  input {
+    border: none;
+    width: 100%;
+    font-size: 12px;
+    background: transparent;
+    outline: none;
+  }
+
+  .col-sl, .col-qty, .col-rate, .col-amount, .col-sac, .col-action {
+    width: 70px;
+    text-align: center;
+  }
+
+  .amount-cell {
+    text-align: right;
+    font-weight: 600;
+  }
+}
+
+.add-row-btn {
+  margin-bottom: 18px;
+  font-size: 12px;
+}
+
+.table-block {
+  margin-bottom: 18px;
+
+  .table-total-row {
+    text-align: right;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 6px 8px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-top: none;
+  }
+}
+
+// ---------- Totals ----------
+.totals-table {
+  margin-left: auto;
+  width: 280px;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+
+  td {
+    padding: 5px 10px;
+    font-size: 12px;
+    border-bottom: 1px solid #e5e7eb;
+
+    &:last-child {
+      text-align: right;
+    }
+  }
+
+  .grand-total td {
+    font-weight: 700;
+    font-size: 14px;
+    border-top: 2px solid #111827;
+    border-bottom: none;
+  }
+
+  .amount-field {
+    width: 100px;
+
+    ::ng-deep .mat-mdc-form-field-infix {
+      min-height: 28px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+
+    input {
+      text-align: right;
+    }
+  }
+}
+
+// ---------- Footer ----------
+.footer-note {
+  font-size: 11px;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.thank-you {
+  font-weight: 700;
+  font-size: 13px;
+  margin: 16px 0 40px;
+}
+
+.signature-row {
+  display: flex;
+  justify-content: flex-end;
+  text-align: center;
+
+  .signature-block {
+    p {
+      margin: 0;
+      font-size: 12px;
+    }
+    .sig-line {
+      border-top: 1px solid #111827;
+      width: 160px;
+      margin: 30px 0 4px;
+    }
+  }
+}
+
+// ---------- Form actions ----------
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed #d1d5db;
+}
+
+@media (max-width: 700px) {
+  .quote-doc {
+    padding: 20px;
+  }
+  .doc-header {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .doc-title-block {
+    text-align: left;
+  }
+  .two-col-row, .project-grid {
+    grid-template-columns: 1fr;
+  }
+}

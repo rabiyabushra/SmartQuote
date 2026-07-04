@@ -1,0 +1,24 @@
+<div class="picker-dialog">
+  <header class="dialog-header">
+    <h2>Select a Quotation Template</h2>
+    <button mat-icon-button (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <p class="dialog-subtitle">
+    Choose the template that matches this job. You'll be taken straight to that quotation form.
+  </p>
+
+  <div class="template-grid">
+    <button
+      type="button"
+      class="template-option"
+      *ngFor="let t of templates"
+      (click)="select(t.id)">
+      <mat-icon class="template-icon">{{ t.icon }}</mat-icon>
+      <span class="template-name">{{ t.name }}</span>
+      <span class="template-desc">{{ t.description }}</span>
+    </button>
+  </div>
+</div>

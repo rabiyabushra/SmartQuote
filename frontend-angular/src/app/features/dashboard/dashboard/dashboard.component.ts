@@ -2,6 +2,7 @@ import { Component, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { MatDialogModule } from '@angular/material/dialog';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,6 +20,11 @@ import { DashboardStats, QuotationStatus, QuotationSummary } from '../../../core
 import { QuotationSearchFilterComponent } from '../../quotation/quotation-search-filter/quotation-search-filter.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+
+import { MatDialog } from '@angular/material/dialog';
+import { TemplatePickerDialogComponent } from '../../templates/template-gallery/template-picker-dialog/template-picker-dialog.component';
+
+import { QuotationTemplateId } from '../../../core/models/quotation-template.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -40,7 +46,8 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatPaginatorModule,
     QuotationSearchFilterComponent,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatDialogModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
@@ -48,6 +55,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 export class DashboardComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   view = signal<'card' | 'table'>('card');
   pageIndex = signal(0);
@@ -159,9 +167,14 @@ applyFilters(filters: any): void {
     this.view.set(mode);
   }
 
-  onNewQuotation(): void {
-    this.router.navigate(['/quotations/new']);
-  }
+ onNewQuotation(): void {
+   const ref = this.dialog.open(TemplatePickerDialogComponent, { width: '600px' });
+   ref.afterClosed().subscribe((templateId: QuotationTemplateId | undefined) => {
+     if (templateId) {
+       this.router.navigate(['/quotations/new', templateId]);
+     }
+   });
+ }
 
   onViewQuotation(id: string): void {
     this.router.navigate(['/quotations', id, 'preview']);
