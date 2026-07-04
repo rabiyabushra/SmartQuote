@@ -1,0 +1,126 @@
+<form [formGroup]="form" class="quote-doc">
+
+  <div class="doc-header">
+    <div class="business-block">
+      <div class="logo-box"></div>
+      <div class="business-text">
+        <h1>{{ businessInfo().businessName }}</h1>
+        <p>{{ businessInfo().streetAddress }}</p>
+        <p>{{ businessInfo().cityPostal }}</p>
+        <p>GSTIN: {{ businessInfo().gstin }}</p>
+        <p>Contact: {{ businessInfo().contact }}</p>
+      </div>
+    </div>
+
+    <div class="doc-title-block">
+      <h2 class="doc-title">SUPPLY QUOTATION</h2>
+      <table class="meta-table">
+        <tr><td>Quote #</td><td>{{ form.value.quoteNumber }}</td></tr>
+        <tr><td>Date</td><td>{{ form.value.quoteDate | date: 'MM/dd/yyyy' }}</td></tr>
+        <tr>
+          <td>Valid Until</td>
+          <td>
+            <mat-form-field appearance="outline" class="meta-field">
+              <input matInput [matDatepicker]="validPicker" formControlName="validUntil" placeholder="Select date" />
+              <mat-datepicker-toggle matIconSuffix [for]="validPicker"></mat-datepicker-toggle>
+              <mat-datepicker #validPicker></mat-datepicker>
+            </mat-form-field>
+          </td>
+        </tr>
+        <tr><td>GSTIN</td><td>{{ form.value.gstin }}</td></tr>
+        <tr>
+          <td>Reference #</td>
+          <td>
+            <mat-form-field appearance="outline" class="meta-field">
+              <input matInput formControlName="referenceNo" />
+            </mat-form-field>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="section-bar">SUPPLY QUOTATION</div>
+
+  <div class="to-block">
+    <span class="to-label">To:</span>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Customer Name" formControlName="customerName" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Customer Address" formControlName="customerAddress" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Contact Person" formControlName="contactPerson" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Contact" formControlName="contact" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput placeholder="Payment Terms" formControlName="paymentTerms" />
+    </mat-form-field>
+  </div>
+
+  <div class="table-title">Supply Details</div>
+  <table class="item-table" formArrayName="items">
+    <thead>
+    <tr>
+      <th class="col-sl">SL No.</th>
+      <th>Description</th>
+      <th class="col-qty">QTY</th>
+      <th class="col-rate">Unit Price</th>
+      <th class="col-rate">CGST (%)</th>
+      <th class="col-amount">Amount</th>
+      <th class="col-action"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let row of items.controls; let i = index" [formGroupName]="i">
+      <td>{{ i + 1 }}</td>
+      <td><input matInput formControlName="description" /></td>
+      <td><input matInput type="number" formControlName="qty" /></td>
+      <td><input matInput type="number" formControlName="unitPrice" /></td>
+      <td class="static-cell">9%</td>
+      <td class="amount-cell">{{ rowAmount(i) | number: '1.2-2' }}</td>
+      <td>
+        <button mat-icon-button type="button" (click)="removeItem(i)" [disabled]="items.length === 1">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <button mat-stroked-button type="button" class="add-row-btn" (click)="addItem()">
+    <mat-icon>add</mat-icon> Add Line Item
+  </button>
+
+  <table class="totals-table">
+    <tr><td>Subtotal</td><td>{{ taxSummary().subtotal | number: '1.2-2' }}</td></tr>
+    <tr><td>CGST &#64; 9%</td><td>{{ taxSummary().cgst | number: '1.2-2' }}</td></tr>
+    <tr><td>SGST &#64; 9%</td><td>{{ taxSummary().sgst | number: '1.2-2' }}</td></tr>
+    <tr class="grand-total"><td>GRAND TOTAL</td><td>{{ taxSummary().total | number: '1.2-2' }}</td></tr>
+  </table>
+
+  <div class="boxed-section">
+    <div class="boxed-title">Terms &amp; Conditions:</div>
+    <mat-form-field appearance="outline" class="full-width">
+      <textarea matInput rows="3" formControlName="termsAndConditions"></textarea>
+    </mat-form-field>
+  </div>
+
+  <p class="footer-note">If you have any questions about this quote, please contact us. Phone {{ businessInfo().contact }}</p>
+  <p class="thank-you">Thank You For Your Business!</p>
+
+  <div class="signature-row">
+    <div class="signature-block">
+      <p>For {{ businessInfo().businessName }}</p>
+      <div class="sig-line"></div>
+      <p>Authorized Signatory</p>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button mat-stroked-button type="button" (click)="saveDraft()">Save as Draft</button>
+    <button mat-flat-button color="primary" type="button" (click)="saveAndPreview()">Save &amp; Preview</button>
+  </div>
+</form>

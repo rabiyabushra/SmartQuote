@@ -1,0 +1,29 @@
+<div class="preview-page">
+  <header class="preview-toolbar">
+    <button mat-button (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon> Back to Quotations
+    </button>
+    <div class="toolbar-actions">
+      <button mat-stroked-button (click)="onEdit()">
+        <mat-icon>edit</mat-icon> Edit
+      </button>
+      <button mat-flat-button color="primary" (click)="onDownload()">
+        <mat-icon>file_download</mat-icon> Download PDF
+      </button>
+    </div>
+  </header>
+
+  <ng-container *ngIf="record() as rec; else notFound">
+    <ng-container [ngSwitch]="rec.templateId">
+      <app-job-work-quotation-view *ngSwitchCase="'job-work'" [data]="rec.formData" />
+      <app-fabrication-quotation-view *ngSwitchCase="'fabrication'" [data]="rec.formData" />
+      <app-supply-quotation-view *ngSwitchCase="'supply'" [data]="rec.formData" />
+      <app-service-quotation-view *ngSwitchCase="'service'" [data]="rec.formData" />
+      <app-maintenance-quotation-view *ngSwitchCase="'maintenance'" [data]="rec.formData" />
+    </ng-container>
+  </ng-container>
+
+  <ng-template #notFound>
+    <p class="not-found">Quotation not found. <a routerLink="/quotations">Go back</a>.</p>
+  </ng-template>
+</div>
