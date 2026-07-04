@@ -69,7 +69,7 @@ export const routes: Routes = [
           import('./features/quotation/quotation-list/quotation-list.component').then(m => m.QuotationListComponent)
       },
       {
-        path: 'new',
+        path: 'new/:templateId',
         loadComponent: () =>
           import('./features/quotation/quotation-form/quotation-form.component').then(m => m.QuotationFormComponent)
       },
