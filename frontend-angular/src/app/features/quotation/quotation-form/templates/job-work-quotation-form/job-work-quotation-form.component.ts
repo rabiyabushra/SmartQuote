@@ -110,7 +110,7 @@ export class JobWorkQuotationFormComponent {
   }
 
   saveDraft(): void {
-  const id = this.quotationService.create('job-work', this.form.value); // match template ID per file
+  const id = this.quotationService.createLocal('job-work', this.form.value); // match template ID per file
   this.snackBar.open('Saved as draft', 'OK', { duration: 2000 });
   this.router.navigate(['/quotations']);
 }
@@ -121,7 +121,7 @@ export class JobWorkQuotationFormComponent {
     this.snackBar.open('Please fill all required fields', 'OK', { duration: 2500 });
     return;
   }
-  const id = this.quotationService.create('job-work', this.form.value); // 'fabrication' | 'supply' | 'service' | 'maintenance' in the other 4 files
+  const id = this.quotationService.createLocal('job-work', this.form.value); // 'fabrication' | 'supply' | 'service' | 'maintenance' in the other 4 files
   this.snackBar.open('Quotation saved', 'OK', { duration: 2000 });
   this.router.navigate(['/quotations', id, 'preview']);
 }

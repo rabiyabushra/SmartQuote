@@ -19,6 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
+import { AuthService } from '../../../core/auth/auth.service';
+
 function passwordsMatchValidator(): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
     const newPassword = group.get('newPassword')?.value;
@@ -52,30 +54,33 @@ export class ResetPasswordComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private authService = inject(AuthService);
 
   isLoading = false;
   hideNewPassword = true;
   hideConfirmPassword = true;
 
-  /** Comes from the reset-link query param, e.g. /auth/reset-password?token=xyz */
-  private resetToken = '';
+  private email = '';
   invalidLink = false;
 
   resetPasswordForm: FormGroup = this.fb.group(
     {
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      otp: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+      newPassword: ['', [Validators.required, Validators.minLength(8)]],
       confirmNewPassword: ['', [Validators.required]]
     },
     { validators: passwordsMatchValidator() }
   );
 
+  get otp() { return this.resetPasswordForm.get('otp'); }
   get newPassword() { return this.resetPasswordForm.get('newPassword'); }
   get confirmNewPassword() { return this.resetPasswordForm.get('confirmNewPassword'); }
 
   ngOnInit(): void {
-    this.resetToken = this.route.snapshot.queryParamMap.get('token') ?? '';
-    if (!this.resetToken) {
+    this.email = this.route.snapshot.queryParamMap.get('email') ?? '';
+    if (!this.email) {
       this.invalidLink = true;
+      this.snackBar.open('Invalid reset link. Please try again.', 'Close', { duration: 5000 });
     }
   }
 
@@ -87,6 +92,19 @@ export class ResetPasswordComponent implements OnInit {
     this.hideConfirmPassword = !this.hideConfirmPassword;
   }
 
+  getDevOtp(): void {
+    const key = `reset:${this.email}`;
+    this.authService.getDevOtp(key).subscribe({
+      next: (response) => {
+        this.snackBar.open(`OTP: ${response.otp}`, 'Close', { duration: 10000 });
+        this.resetPasswordForm.patchValue({ otp: response.otp });
+      },
+      error: () => {
+        this.snackBar.open('Failed to get dev OTP', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
   onSubmit(): void {
     if (this.resetPasswordForm.invalid || this.invalidLink) {
       this.resetPasswordForm.markAllAsTouched();
@@ -94,13 +112,23 @@ export class ResetPasswordComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const { newPassword } = this.resetPasswordForm.value;
+    const { otp, newPassword } = this.resetPasswordForm.value;
 
-    // TODO: replace with AuthService.resetPassword(this.resetToken, newPassword)
-    setTimeout(() => {
-      this.isLoading = false;
-      this.snackBar.open('Password updated. Please sign in.', 'OK', { duration: 3000 });
-      this.router.navigate(['/auth/sign-in']);
-    }, 800);
+    this.authService.resetPassword({
+      email: this.email,
+      otp,
+      newPassword
+    }).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.snackBar.open(response.message, 'Close', { duration: 3000 });
+        this.router.navigate(['/auth/sign-in']);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        const message = error.error?.message || 'Failed to reset password. Please try again.';
+        this.snackBar.open(message, 'Close', { duration: 5000 });
+      }
+    });
   }
 }

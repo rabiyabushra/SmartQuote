@@ -17,6 +17,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+import { AuthService } from '../../../core/auth/auth.service';
 
 /** Custom validator: confirmPassword must equal password */
 function passwordsMatchValidator(): ValidatorFn {
@@ -41,7 +44,8 @@ function passwordsMatchValidator(): ValidatorFn {
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSnackBarModule
   ],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.scss'
@@ -49,6 +53,8 @@ function passwordsMatchValidator(): ValidatorFn {
 export class SignUpComponent {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private authService = inject(AuthService);
+  private snackBar = inject(MatSnackBar);
 
   isLoading = false;
   hidePassword = true;
@@ -56,15 +62,17 @@ export class SignUpComponent {
 
   signUpForm: FormGroup = this.fb.group(
     {
+      businessName: ['', [Validators.required, Validators.minLength(2)]],
       ownerName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       contactNumber: ['', [Validators.required, Validators.pattern(/^[6-9]\d{9}$/)]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required]]
     },
     { validators: passwordsMatchValidator() }
   );
 
+  get businessName() { return this.signUpForm.get('businessName'); }
   get ownerName() { return this.signUpForm.get('ownerName'); }
   get email() { return this.signUpForm.get('email'); }
   get contactNumber() { return this.signUpForm.get('contactNumber'); }
@@ -86,12 +94,25 @@ export class SignUpComponent {
     }
 
     this.isLoading = true;
-    const { ownerName, email, contactNumber, password } = this.signUpForm.value;
+    const { businessName, ownerName, email, contactNumber, password } = this.signUpForm.value;
 
-    // TODO: replace with AuthService.signUp({ ownerName, email, contactNumber, password })
-    setTimeout(() => {
-      this.isLoading = false;
-      this.router.navigate(['/auth/sign-in']);
-    }, 800);
+    this.authService.signUp({
+      businessName,
+      ownerName,
+      email,
+      phone: contactNumber,
+      password
+    }).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.snackBar.open('Account created successfully!', 'Close', { duration: 3000 });
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        this.isLoading = false;
+        const message = error.error?.message || 'Failed to create account. Please try again.';
+        this.snackBar.open(message, 'Close', { duration: 5000 });
+      }
+    });
   }
 }

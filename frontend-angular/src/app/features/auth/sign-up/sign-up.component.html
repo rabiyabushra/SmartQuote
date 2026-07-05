@@ -17,6 +17,21 @@
 
       <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" class="form">
 
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label class="field-label">Business Name</mat-label>
+          <input
+            matInput
+            type="text"
+            formControlName="businessName"
+            placeholder="Acme Traders"
+            autocomplete="organization" />
+          <mat-error *ngIf="businessName?.touched && businessName?.hasError('required')">
+            Business name is required
+          </mat-error>
+          <mat-error *ngIf="businessName?.hasError('minlength')">
+            Enter at least 2 characters
+          </mat-error>
+        </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label class="field-label">Owner Name</mat-label>
@@ -92,7 +107,7 @@
             Password is required
           </mat-error>
           <mat-error *ngIf="password?.hasError('minlength')">
-            Password must be at least 6 characters
+            Password must be at least 8 characters
           </mat-error>
         </mat-form-field>
 
