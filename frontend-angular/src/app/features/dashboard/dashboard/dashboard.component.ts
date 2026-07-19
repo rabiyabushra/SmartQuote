@@ -323,4 +323,22 @@ applyFilters(filters: any): void {
       }
     });
   }
+
+  /**
+   * Sign out user
+   */
+  signOut(): void {
+    this.authService.signOut().subscribe({
+      next: () => {
+        this.snackBar.open('Signed out successfully', 'Close', { duration: 3000 });
+        this.router.navigate(['/auth/sign-in']);
+      },
+      error: (error) => {
+        console.error('Error signing out:', error);
+        // Even if API fails, clear local data and redirect
+        this.authService.clearAuthData();
+        this.router.navigate(['/auth/sign-in']);
+      }
+    });
+  }
 }

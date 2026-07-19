@@ -8,6 +8,13 @@ public class AuthResponseDto {
     private String name;
     private String email;
     private String role;
+    
+    // Business details
+    private String businessName;
+    private String phone;
+    private String address;
+    private String gstin;
+    private String logoUrl;
 
     public static AuthResponseDto of(String token, String userId, String businessId,
                                      String name, String email, String role) {
@@ -18,6 +25,25 @@ public class AuthResponseDto {
         dto.name = name;
         dto.email = email;
         dto.role = role;
+        return dto;
+    }
+
+    public static AuthResponseDto ofWithBusiness(String token, String userId, String businessId,
+                                                 String name, String email, String role,
+                                                 String businessName, String phone, 
+                                                 String address, String gstin, String logoUrl) {
+        AuthResponseDto dto = new AuthResponseDto();
+        dto.token = token;
+        dto.userId = userId;
+        dto.businessId = businessId;
+        dto.name = name;
+        dto.email = email;
+        dto.role = role;
+        dto.businessName = businessName;
+        dto.phone = phone;
+        dto.address = address;
+        dto.gstin = gstin;
+        dto.logoUrl = logoUrl;
         return dto;
     }
 
@@ -38,4 +64,19 @@ public class AuthResponseDto {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getBusinessName() { return businessName; }
+    public void setBusinessName(String businessName) { this.businessName = businessName; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getGstin() { return gstin; }
+    public void setGstin(String gstin) { this.gstin = gstin; }
+
+    public String getLogoUrl() { return logoUrl; }
+    public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
 }

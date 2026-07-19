@@ -25,6 +25,12 @@ export interface AuthResponse {
   name: string;
   email: string;
   role: string;
+  // Business details
+  businessName?: string;
+  phone?: string;
+  address?: string;
+  gstin?: string;
+  logoUrl?: string;
 }
 
 export interface PasswordResetInitRequest {

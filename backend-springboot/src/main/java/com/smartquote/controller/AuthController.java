@@ -38,10 +38,18 @@ public class AuthController {
         String token = UUID.randomUUID().toString();
         authService.issueSession(token, user.getId());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                AuthResponseDto.of(token, user.getId(), user.getBusinessId(),
-                        user.getName(), user.getEmail(), user.getRole())
-        );
+        // Include business details in the auth response
+        AuthResponseDto response = authService.getBusinessProfile(user.getBusinessId())
+                .map(business -> AuthResponseDto.ofWithBusiness(
+                        token, user.getId(), user.getBusinessId(),
+                        user.getName(), user.getEmail(), user.getRole(),
+                        business.getBusinessName(), business.getPhone(),
+                        business.getAddress(), business.getGstin(), business.getLogoUrl()
+                ))
+                .orElse(AuthResponseDto.of(token, user.getId(), user.getBusinessId(),
+                        user.getName(), user.getEmail(), user.getRole()));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /** Step 1: validate credentials and send OTP. */
@@ -58,10 +66,18 @@ public class AuthController {
         User user = authService.resolveSession(token)
                 .orElseThrow(() -> new IllegalStateException("Session could not be established."));
 
-        return ResponseEntity.ok(
-                AuthResponseDto.of(token, user.getId(), user.getBusinessId(),
-                        user.getName(), user.getEmail(), user.getRole())
-        );
+        // Include business details in the auth response
+        AuthResponseDto response = authService.getBusinessProfile(user.getBusinessId())
+                .map(business -> AuthResponseDto.ofWithBusiness(
+                        token, user.getId(), user.getBusinessId(),
+                        user.getName(), user.getEmail(), user.getRole(),
+                        business.getBusinessName(), business.getPhone(),
+                        business.getAddress(), business.getGstin(), business.getLogoUrl()
+                ))
+                .orElse(AuthResponseDto.of(token, user.getId(), user.getBusinessId(),
+                        user.getName(), user.getEmail(), user.getRole()));
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/sign-out")
@@ -76,10 +92,19 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<AuthResponseDto> me(@RequestHeader HttpHeaders headers) {
         User user = requireUser(headers);
-        return ResponseEntity.ok(
-                AuthResponseDto.of(null, user.getId(), user.getBusinessId(),
-                        user.getName(), user.getEmail(), user.getRole())
-        );
+        
+        // Include business details in the auth response
+        AuthResponseDto response = authService.getBusinessProfile(user.getBusinessId())
+                .map(business -> AuthResponseDto.ofWithBusiness(
+                        null, user.getId(), user.getBusinessId(),
+                        user.getName(), user.getEmail(), user.getRole(),
+                        business.getBusinessName(), business.getPhone(),
+                        business.getAddress(), business.getGstin(), business.getLogoUrl()
+                ))
+                .orElse(AuthResponseDto.of(null, user.getId(), user.getBusinessId(),
+                        user.getName(), user.getEmail(), user.getRole()));
+        
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/forgot-password")
