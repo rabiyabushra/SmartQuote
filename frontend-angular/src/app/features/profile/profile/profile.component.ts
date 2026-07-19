@@ -1,6 +1,7 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,8 +9,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { BusinessProfile, QuotationTemplateOption } from '../../../core/models/business-profile.model';
+import { AuthService } from '../../../core/auth/auth.service';
+import { TemplateService } from '../../../core/services/template.service';
 
 type EditableField =
   | 'businessName' | 'ownerName'
@@ -27,35 +31,37 @@ type EditableField =
     MatInputModule,
     MatFormFieldModule,
     MatTooltipModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
+  private authService = inject(AuthService);
+  private templateService = inject(TemplateService);
+  private router = inject(Router);
 
-  // TODO: replace with BusinessService.getProfile()
+  isLoading = signal(true);
+  isLoadingTemplates = signal(true);
+
+  // Profile data from authenticated user
   profile = signal<BusinessProfile>({
-    businessName: 'Sharma Fabrication Works',
-    ownerName: 'Rajesh Sharma',
+    businessName: '',
+    ownerName: '',
     logoUrl: null,
-    email: 'rajesh@sharmafab.com',
-    contactNumber: '+91 98765 43210',
-    gstin: '27ABCDE1234F1Z5',
-    address: 'Plot 14, MIDC Industrial Area, Pune, MH 411019',
+    email: '',
+    contactNumber: '',
+    gstin: '',
+    address: '',
     selectedTemplateId: 'template4',
     termsAndConditions: '1. Prices valid for 15 days.\n2. 50% advance required.\n3. GST as applicable.',
     footerNotes: 'Thank you for your business. For queries, contact us at the number above.'
   });
 
-  templates: QuotationTemplateOption[] = [
-    { id: 'template1', name: 'Template1', thumbnailUrl: 'assets/templates/template1-thumb.png' },
-    { id: 'template2', name: 'Template2', thumbnailUrl: 'assets/templates/template2-thumb.png' },
-    { id: 'template3', name: 'Template3', thumbnailUrl: 'assets/templates/template3-thumb.png' },
-    { id: 'template4', name: 'Template4', thumbnailUrl: 'assets/templates/template4-thumb.png' },
-    { id: 'template5', name: 'Template5', thumbnailUrl: 'assets/templates/template5-thumb.png' }
-  ];
+  // Templates fetched from backend
+  templates = signal<QuotationTemplateOption[]>([]);
 
   /** Tracks which single field is currently in edit mode (null = none) */
   editingField = signal<EditableField | null>(null);
@@ -106,5 +112,88 @@ export class ProfileComponent {
   openAccountSettings(): void {
     // TODO: route to account/security settings screen
     console.log('Open account settings');
+  }
+
+  ngOnInit(): void {
+    this.loadUserProfile();
+    this.loadTemplates();
+  }
+
+  /**
+   * Load user profile from authentication service
+   */
+  private loadUserProfile(): void {
+    const currentUser = this.authService.currentUser();
+    
+    if (!currentUser) {
+      // If no user is logged in, redirect to sign-in
+      this.router.navigate(['/auth/sign-in']);
+      return;
+    }
+
+    // Use the current user data from the auth service
+    // This now includes business details populated during sign-up/sign-in
+    this.profile.update(p => ({
+      ...p,
+      ownerName: currentUser.name || 'User',
+      email: currentUser.email || '',
+      businessName: currentUser.businessName || 'My Business',
+      contactNumber: currentUser.phone || '',
+      gstin: currentUser.gstin || '',
+      address: currentUser.address || '',
+      logoUrl: currentUser.logoUrl || null
+    }));
+    this.isLoading.set(false);
+  }
+
+  /**
+   * Load quotation templates from backend
+   */
+  private loadTemplates(): void {
+    this.isLoadingTemplates.set(true);
+    this.templateService.list().subscribe({
+      next: (backendTemplates) => {
+        // Map backend templates to UI model
+        const templateOptions: QuotationTemplateOption[] = backendTemplates.map(t => ({
+          id: t.id,
+          name: t.name,
+          thumbnailUrl: `assets/templates/${t.id}-thumb.png` // Fallback to local assets
+        }));
+        
+        this.templates.set(templateOptions);
+        this.isLoadingTemplates.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading templates:', error);
+        // Fallback to static templates if backend fails
+        this.templates.set([
+          { id: 'template1', name: 'Template1', thumbnailUrl: 'assets/templates/template1-thumb.png' },
+          { id: 'template2', name: 'Template2', thumbnailUrl: 'assets/templates/template2-thumb.png' },
+          { id: 'template3', name: 'Template3', thumbnailUrl: 'assets/templates/template3-thumb.png' },
+          { id: 'template4', name: 'Template4', thumbnailUrl: 'assets/templates/template4-thumb.png' },
+          { id: 'template5', name: 'Template5', thumbnailUrl: 'assets/templates/template5-thumb.png' }
+        ]);
+        this.isLoadingTemplates.set(false);
+        this.snackBar.open('Using default templates (backend unavailable)', 'Close', { duration: 3000 });
+      }
+    });
+  }
+
+  /**
+   * Sign out user
+   */
+  signOut(): void {
+    this.authService.signOut().subscribe({
+      next: () => {
+        this.snackBar.open('Signed out successfully', 'Close', { duration: 3000 });
+        this.router.navigate(['/auth/sign-in']);
+      },
+      error: (error) => {
+        console.error('Error signing out:', error);
+        // Even if API fails, clear local data and redirect
+        this.authService.clearAuthData();
+        this.router.navigate(['/auth/sign-in']);
+      }
+    });
   }
 }

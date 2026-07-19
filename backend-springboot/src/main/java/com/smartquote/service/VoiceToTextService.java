@@ -23,7 +23,7 @@ import java.util.Set;
  * item description, quantity, rate. NOT a conversational/full-quotation parser
  * (explicitly out of scope, Section 10.2).
  */
-@Service
+@Service("fieldVoiceToTextService")
 public class VoiceToTextService {
 
     private static final Set<String> ELIGIBLE_FIELDS = Set.of("itemDescription", "quantity", "rate");

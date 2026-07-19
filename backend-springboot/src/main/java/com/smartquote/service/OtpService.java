@@ -1,6 +1,9 @@
 // OtpService.java
 package com.smartquote.service;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -21,12 +24,36 @@ public class OtpService {
 
     private final SecureRandom random = new SecureRandom();
     private final ConcurrentHashMap<String, OtpEntry> store = new ConcurrentHashMap<>();
+    private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String fromEmail;
+
+    public OtpService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
 
     /** Generates a new OTP for the given key (email or phone), replacing any previous one. */
     public String generate(String key) {
         String otp = String.format("%0" + OTP_LENGTH + "d", random.nextInt(1_000_000));
         store.put(key, new OtpEntry(otp, Instant.now().plusSeconds(EXPIRY_SECONDS), 0));
-        return otp; // TODO: hand off to SMS/email sender once that integration exists — out of scope for this MVP per Section 10.2 of the approach doc
+        
+        // If the key looks like an email, send the OTP via email
+        if (key.contains("@")) {
+            sendOtpEmail(key, otp);
+        }
+        
+        return otp;
+    }
+
+    private void sendOtpEmail(String toEmail, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromEmail);
+        message.setTo(toEmail);
+        message.setSubject("Your OTP for SmartQuote");
+        message.setText("Your OTP is: " + otp + "\nThis OTP is valid for 5 minutes.");
+        
+        mailSender.send(message);
     }
 
     /** Verifies the OTP for a key. Consumes it on success; counts failed attempts otherwise. */

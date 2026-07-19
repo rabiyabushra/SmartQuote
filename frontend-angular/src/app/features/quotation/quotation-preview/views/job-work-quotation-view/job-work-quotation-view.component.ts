@@ -1,6 +1,7 @@
-import { Component, Input, computed, signal } from '@angular/core';
+import { Component, Input, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { calculateTax } from '../../../../../core/utils/quotation-tax.util';
+import { AuthService } from '../../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-job-work-quotation-view',
@@ -12,13 +13,17 @@ import { calculateTax } from '../../../../../core/utils/quotation-tax.util';
 export class JobWorkQuotationViewComponent {
   @Input() data: any;
 
-  // TODO: replace with BusinessService.getProfile()
-  businessInfo = signal({
-    businessName: 'Sharma Fabrication Works',
-    streetAddress: 'Plot 14, MIDC Industrial Area',
-    cityPostal: 'Pune, MH 411019',
-    gstin: '27ABCDE1234F1Z5',
-    contact: '+91 98765 43210 · rajesh@sharmafab.com'
+  private authService = inject(AuthService);
+
+  businessInfo = computed(() => {
+    const user = this.authService.currentUser();
+    return {
+      businessName: user?.businessName || '—',
+      streetAddress: user?.address?.split(',')[0] || '—',
+      cityPostal: user?.address?.split(',').slice(1).join(',').trim() || '—',
+      gstin: user?.gstin || '—',
+      contact: user?.phone || user?.email || '—'
+    };
   });
 
   items = computed(() => this.data?.items ?? []);

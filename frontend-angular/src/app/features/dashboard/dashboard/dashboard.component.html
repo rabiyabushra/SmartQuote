@@ -15,7 +15,7 @@
         <mat-icon>add</mat-icon>
         New Quotation
       </button>
-      <button mat-icon-button matTooltip="Sign out">
+      <button mat-icon-button (click)="signOut()" matTooltip="Sign out">
         <mat-icon>logout</mat-icon>
       </button>
     </div>
@@ -127,8 +127,25 @@
     <button mat-button class="clear-all-btn" (click)="clearAllFilters()">Clear all</button>
   </section>
 
+  <!-- Loading State -->
+  <section class="loading-state" *ngIf="isLoading()">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading quotations...</p>
+  </section>
+
+  <!-- Empty State -->
+  <section class="empty-state" *ngIf="!isLoading() && quotations().length === 0">
+    <mat-icon class="empty-icon">description</mat-icon>
+    <h2>No quotations yet</h2>
+    <p>Create your first quotation to get started</p>
+    <button mat-flat-button color="primary" (click)="onNewQuotation()">
+      <mat-icon>add</mat-icon>
+      Create Quotation
+    </button>
+  </section>
+
   <!-- Quotation cards -->
-  <section class="quotation-grid" *ngIf="view() === 'card'">
+  <section class="quotation-grid" *ngIf="!isLoading() && view() === 'card' && quotations().length > 0">
     <div class="quotation-card" *ngFor="let q of quotations()" [ngClass]="statusColor(q.status)">
       <div class="card-top-bar"></div>
 
@@ -206,7 +223,7 @@
   </section>
 
   <!-- Table view placeholder -->
-  <section class="quotation-table" *ngIf="view() === 'table'">
+  <section class="quotation-table" *ngIf="!isLoading() && view() === 'table' && quotations().length > 0">
     <p class="table-placeholder">Table view — build with mat-table once card view is confirmed with the team.</p>
   </section>
 

@@ -161,7 +161,7 @@
         <button
           type="button"
           class="template-card"
-          *ngFor="let template of templates"
+          *ngFor="let template of templates()"
           [class.selected]="profile().selectedTemplateId === template.id"
           (click)="selectTemplate(template.id)">
           <div class="template-thumb">

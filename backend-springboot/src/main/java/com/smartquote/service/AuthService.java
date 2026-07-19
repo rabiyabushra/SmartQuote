@@ -132,4 +132,9 @@ public class AuthService {
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
+
+    /** Get business profile by ID */
+    public Optional<Business> getBusinessProfile(String businessId) {
+        return businessRepository.findById(businessId);
+    }
 }

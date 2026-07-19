@@ -1,0 +1,125 @@
+.quotation-list-container {
+  padding: 24px;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 500;
+    }
+  }
+
+  .filters-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+
+    .search-field {
+      flex: 1;
+      max-width: 400px;
+    }
+
+    .status-filter {
+      min-width: 200px;
+    }
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+
+    .quotation-table {
+      width: 100%;
+      
+      th {
+        font-weight: 600;
+        background-color: #f5f5f5;
+      }
+
+      td, th {
+        padding: 16px;
+      }
+
+      .quotation-row:hover {
+        background-color: #f9f9f9;
+        cursor: pointer;
+      }
+
+      .customer-info {
+        small {
+          color: #666;
+          font-size: 12px;
+        }
+      }
+
+      mat-chip {
+        font-size: 12px;
+        min-height: 24px;
+        padding: 4px 12px;
+      }
+
+      .status-draft {
+        background-color: #e0e0e0;
+        color: #333;
+      }
+
+      .status-sent {
+        background-color: #2196f3;
+        color: white;
+      }
+
+      .status-accepted {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      .status-rejected, .status-expired {
+        background-color: #f44336;
+        color: white;
+      }
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 48px;
+      color: #666;
+
+      mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 16px;
+        opacity: 0.3;
+      }
+
+      p {
+        font-size: 16px;
+        margin-bottom: 16px;
+      }
+    }
+
+    .delete-action {
+      color: #f44336;
+    }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px;
+    color: #666;
+
+    p {
+      margin-top: 16px;
+    }
+  }
+}
