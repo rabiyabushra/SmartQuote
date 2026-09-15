@@ -1,0 +1,31 @@
+<button
+  type="button"
+  mat-icon-button
+  class="mic-button"
+  [class.mic-button--recording]="state === 'recording'"
+  [class.mic-button--processing]="state === 'processing'"
+  [class.mic-button--success]="state === 'success'"
+  [class.mic-button--error]="state === 'error'"
+  [disabled]="disabled || state === 'processing'"
+  [attr.aria-label]="ariaLabel"
+  [attr.aria-pressed]="state === 'recording'"
+  (click)="onMicClick()"
+>
+  @if (state === 'processing') {
+    <mat-spinner diameter="20"></mat-spinner>
+  } @else if (state === 'recording') {
+    <mat-icon>stop_circle</mat-icon>
+  } @else if (state === 'success') {
+    <mat-icon>check_circle</mat-icon>
+  } @else if (state === 'error') {
+    <mat-icon>error_outline</mat-icon>
+  } @else {
+    <mat-icon>mic</mat-icon>
+  }
+</button>
+
+@if (statusMessage) {
+  <span class="mic-status" [class.mic-status--error]="state === 'error'">
+    {{ statusMessage }}
+  </span>
+}

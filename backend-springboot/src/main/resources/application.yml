@@ -1,9 +1,28 @@
 spring:
   application:
     name: backend-springboot
+  config:
+    import: optional:file:../.env[.properties]
   data:
     mongodb:
-      uri: ${MONGODB_URI}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/smartquote}
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
 
 server:
   port: 8080
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+
+storage:
+  local:
+    base-dir: ./storage
+  base-url: http://localhost:8080/files
+
+whisper:
+  api:
+    key: ${WHISPER_API_KEY:}

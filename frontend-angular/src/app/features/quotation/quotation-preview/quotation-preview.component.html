@@ -1,0 +1,67 @@
+<section class="preview-panel">
+  <header class="preview-panel__header">
+    <h2>Quotation PDF & WhatsApp Share</h2>
+    <p>Generate your quotation PDF document and share it directly via WhatsApp.</p>
+  </header>
+
+  @if (pdfUrl()) {
+    <p class="preview-panel__pdf">
+      PDF Ready:
+      <a [href]="pdfUrl()!" target="_blank" rel="noopener noreferrer">View PDF Document</a>
+    </p>
+  }
+
+  <div class="preview-panel__actions">
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="isGeneratingPdf() || !quotationId"
+      (click)="generatePdf()"
+    >
+      @if (isGeneratingPdf()) {
+        <mat-spinner diameter="18"></mat-spinner>
+      }
+      Generate PDF
+    </button>
+
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="!quotationId"
+      (click)="downloadPdfFile()"
+    >
+      <mat-icon>download</mat-icon>
+      Download PDF
+    </button>
+
+    <mat-form-field appearance="outline" class="preview-panel__phone">
+      <mat-label>Customer Phone (WhatsApp)</mat-label>
+      <input matInput [(ngModel)]="phone" [placeholder]="customerPhone || '+919876543210'" />
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="accent"
+      type="button"
+      [disabled]="isSharing() || !quotationId"
+      (click)="shareViaWhatsApp()"
+      class="whatsapp-btn"
+    >
+      @if (isSharing()) {
+        <mat-spinner diameter="18"></mat-spinner>
+      } @else {
+        <mat-icon>share</mat-icon>
+      }
+      Share via WhatsApp
+    </button>
+  </div>
+
+  @if (statusMessage()) {
+    <p class="preview-panel__status">{{ statusMessage() }}</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="preview-panel__error">{{ errorMessage() }}</p>
+  }
+</section>

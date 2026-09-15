@@ -1,0 +1,40 @@
+.preview-panel {
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.preview-panel__header h2 {
+  margin: 0 0 0.35rem;
+}
+
+.preview-panel__header p {
+  margin: 0 0 1rem;
+  color: #607d8b;
+}
+
+.preview-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.preview-panel__phone {
+  min-width: 16rem;
+}
+
+.preview-panel__pdf {
+  margin: 0 0 1rem;
+}
+
+.preview-panel__status {
+  margin: 1rem 0 0;
+  color: #2e7d32;
+}
+
+.preview-panel__error {
+  margin: 1rem 0 0;
+  color: #c62828;
+}

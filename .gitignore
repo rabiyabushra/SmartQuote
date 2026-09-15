@@ -23,6 +23,4 @@ Thumbs.db
 # ---- IDE ----
 .vscode/
 .idea/
-
-# ---- Internal DOCS ----
 docs/
