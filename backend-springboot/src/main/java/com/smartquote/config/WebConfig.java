@@ -20,8 +20,8 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         Path storagePath = Paths.get(baseDir).toAbsolutePath().normalize();
-        String location = "file:" + storagePath + "/";
-        registry.addResourceHandler("/files/**")
-                .addResourceLocations(location);
+        String location = "file:" + storagePath.toString().replace('\\', '/') + "/";
+        registry.addResourceHandler("/files/**", "/quotations/**", "/files/quotations/**")
+                .addResourceLocations(location, location + "quotations/");
     }
 }

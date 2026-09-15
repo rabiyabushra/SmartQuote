@@ -1,1 +1,98 @@
-<p>quotation-form works!</p>
+<div class="quotation-form-container">
+  <mat-card class="quotation-card">
+    <mat-card-header class="quotation-card__header">
+      <div class="header-content">
+        <mat-card-title class="title">Create Voice-Ready Quotation</mat-card-title>
+        <mat-card-subtitle class="subtitle">Use voice input to speak item descriptions, quantities, and amounts</mat-card-subtitle>
+      </div>
+      <div class="quotation-badge">
+        <span class="badge-label">Quotation ID</span>
+        <span class="badge-value">{{ quotationId() }}</span>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="quotation-card__content">
+      <!-- Customer Information Section -->
+      <section class="section customer-section">
+        <h3 class="section-title">
+          <mat-icon class="section-icon">person</mat-icon>
+          Customer Details
+        </h3>
+        <div class="customer-fields">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Customer Name</mat-label>
+            <input matInput [ngModel]="customerName()" (ngModelChange)="customerName.set($event)" placeholder="Enter customer / business name" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Customer Phone (WhatsApp)</mat-label>
+            <input matInput [ngModel]="customerPhone()" (ngModelChange)="customerPhone.set($event)" placeholder="+91 XXXXX XXXXX" />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Line Items Section -->
+      <section class="section items-section">
+        <div class="items-header">
+          <h3 class="section-title">
+            <mat-icon class="section-icon">inventory_2</mat-icon>
+            Line Items (Voice Assisted)
+          </h3>
+          <button mat-flat-button color="primary" type="button" (click)="addItemRow()" class="add-item-btn">
+            <mat-icon>add</mat-icon>
+            Add Line Item
+          </button>
+        </div>
+
+        <div class="items-list">
+          @for (item of items(); track item.lineNumber) {
+            <app-quotation-item-row
+              [quotationId]="quotationId()"
+              [lineNumber]="item.lineNumber"
+              [itemDescription]="item.itemDescription"
+              [quantity]="item.quantity"
+              [rate]="item.rate"
+              [unit]="item.unit"
+              [removable]="items().length > 1"
+              (itemChange)="onItemChange($event)"
+              (remove)="onRemoveItem($event)"
+            ></app-quotation-item-row>
+          }
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Calculation Summary -->
+      <section class="section calculation-section">
+        <div class="calculation-box">
+          <div class="calc-row">
+            <span>Subtotal</span>
+            <span class="calc-amount">₹{{ subtotal() | number:'1.2-2' }}</span>
+          </div>
+          <div class="calc-row">
+            <span>GST (18%)</span>
+            <span class="calc-amount">₹{{ gstAmount() | number:'1.2-2' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="calc-row calc-row--total">
+            <span>Grand Total</span>
+            <span class="calc-amount calc-amount--total">₹{{ grandTotal() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- PDF Generation & WhatsApp Share -->
+      <section class="section preview-section">
+        <app-quotation-preview
+          [quotationId]="quotationId()"
+          [customerPhone]="customerPhone()"
+        ></app-quotation-preview>
+      </section>
+    </mat-card-content>
+  </mat-card>
+</div>

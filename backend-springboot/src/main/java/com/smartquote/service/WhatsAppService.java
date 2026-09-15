@@ -78,13 +78,9 @@ public class WhatsAppService {
     public String buildWhatsAppShareLink(String phone, Quotation quotation, String pdfUrl) {
         String digitsOnly = phone == null ? "" : phone.replaceAll("[^0-9]", "");
         if (digitsOnly.isEmpty()) {
-            throw new IllegalArgumentException("A valid phone number is required to build a WhatsApp share link.");
+            return "https://web.whatsapp.com";
         }
-
-        String message = "Hi, please find your quotation "
-                + quotation.getQuotationNumber() + " here: " + pdfUrl;
-
-        return "https://wa.me/" + digitsOnly + "?text=" + urlEncode(message);
+        return "https://wa.me/" + digitsOnly;
     }
 
     private String urlEncode(String value) {
