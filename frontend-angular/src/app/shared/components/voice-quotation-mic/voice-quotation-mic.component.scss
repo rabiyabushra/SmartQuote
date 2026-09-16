@@ -1,0 +1,241 @@
+.voice-hero-card {
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #f8fafc;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+
+  &__header {
+    padding: 20px 24px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+
+    .hero-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .title-icon {
+        color: #38bdf8;
+        font-size: 1.6rem;
+        width: 1.6rem;
+        height: 1.6rem;
+      }
+    }
+
+    .hero-subtitle {
+      color: #94a3b8;
+      font-size: 0.92rem;
+      margin-top: 4px;
+    }
+  }
+
+  &__content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.mic-action-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 16px 0;
+}
+
+.mic-pulse-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .hero-mic-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover:not(:disabled) {
+      transform: scale(1.06);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.6);
+    }
+
+    .mic-icon {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+
+  &.recording {
+    .hero-mic-btn {
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      animation: pulse-ring 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
+    }
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 22px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.mic-status-info {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  .idle-badge {
+    color: #94a3b8;
+    letter-spacing: 0.05em;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .recording-badge {
+    color: #f87171;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+
+    .dot-live {
+      width: 10px;
+      height: 10px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+  }
+
+  .processing-badge {
+    color: #38bdf8;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .success-badge {
+    color: #4ade80;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .error-badge {
+    color: #f87171;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .status-subtext {
+    margin-top: 4px;
+    font-size: 0.8rem;
+    color: #64748b;
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.transcript-box-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  ::ng-deep .mat-mdc-form-field {
+    width: 100%;
+
+    .mdc-text-field--outlined {
+      background-color: rgba(15, 23, 42, 0.6);
+      border-radius: 12px;
+    }
+
+    .mat-mdc-input-element {
+      color: #f8fafc;
+    }
+
+    .mdc-floating-label {
+      color: #94a3b8;
+    }
+  }
+
+  .transcript-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    .parse-btn {
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+      color: #ffffff;
+      font-weight: 600;
+      border-radius: 8px;
+      padding: 0 20px;
+      height: 42px;
+
+      mat-icon {
+        margin-right: 6px;
+      }
+    }
+  }
+}
+
+.examples-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+  .examples-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .example-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .chip-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #cbd5e1;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(56, 189, 248, 0.15);
+        border-color: #38bdf8;
+        color: #ffffff;
+      }
+    }
+  }
+}

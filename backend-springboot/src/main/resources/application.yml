@@ -22,7 +22,3 @@ storage:
   local:
     base-dir: ./storage
   base-url: http://localhost:8080/files
-
-whisper:
-  api:
-    key: ${WHISPER_API_KEY:}

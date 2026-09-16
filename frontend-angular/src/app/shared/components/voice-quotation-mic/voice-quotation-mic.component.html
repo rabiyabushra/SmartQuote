@@ -1,0 +1,125 @@
+<mat-card class="voice-hero-card" [ngClass]="'state-' + state()">
+  <mat-card-header class="voice-hero-card__header">
+    <div class="header-text">
+      <mat-card-title class="hero-title">
+        <mat-icon class="title-icon">record_voice_over</mat-icon>
+        Speak Your Quotation
+      </mat-card-title>
+      <mat-card-subtitle class="hero-subtitle">
+        Press to record natural speech for the entire quotation (customer, items, quantity, prices, GST)
+      </mat-card-subtitle>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content class="voice-hero-card__content">
+    <!-- Mic Action Area -->
+    <div class="mic-action-container">
+      <div class="mic-pulse-wrapper" [class.recording]="state() === 'recording'">
+        <button
+          mat-fab
+          color="primary"
+          type="button"
+          class="hero-mic-btn"
+          [disabled]="state() === 'processing'"
+          (click)="toggleRecording()"
+          [attr.aria-label]="state() === 'recording' ? 'Stop recording quotation' : 'Start speaking quotation'"
+        >
+          @if (state() === 'recording') {
+            <mat-icon class="mic-icon animate-pulse">stop</mat-icon>
+          } @else if (state() === 'processing') {
+            <mat-progress-spinner mode="indeterminate" diameter="36" class="spinner-overlay"></mat-progress-spinner>
+          } @else {
+            <mat-icon class="mic-icon">mic</mat-icon>
+          }
+        </button>
+      </div>
+
+      <div class="mic-status-info">
+        @if (state() === 'recording') {
+          <span class="recording-badge">
+            <span class="dot-live"></span> RECORDING — {{ formatTime(recordingDurationSeconds()) }}
+          </span>
+          <p class="status-subtext">Click stop or pause speaking when done.</p>
+        } @else if (state() === 'processing') {
+          <span class="processing-badge">
+            <mat-progress-spinner mode="indeterminate" diameter="16"></mat-progress-spinner>
+            {{ statusMessage() }}
+          </span>
+        } @else if (state() === 'error') {
+          <span class="error-badge">
+            <mat-icon class="badge-icon">error_outline</mat-icon> {{ statusMessage() }}
+          </span>
+        } @else if (state() === 'success') {
+          <span class="success-badge">
+            <mat-icon class="badge-icon">check_circle</mat-icon> {{ statusMessage() }}
+          </span>
+        } @else {
+          <span class="idle-badge">CLICK TO START RECORDING</span>
+        }
+      </div>
+    </div>
+
+    <!-- Transcript Edit / Review Box -->
+    <div class="transcript-box-container">
+      <mat-form-field appearance="outline" class="transcript-field">
+        <mat-label>Spoken Transcript / Voice Input</mat-label>
+        <textarea
+          matInput
+          rows="3"
+          [ngModel]="transcriptText()"
+          (ngModelChange)="transcriptText.set($event)"
+          placeholder='e.g. "Create a quotation for Ravi Traders. Item HP LaserJet Printer quantity 2 price 12000 each. Item A4 paper box quantity 5 price 450 each. Add 18% GST."'
+        ></textarea>
+      </mat-form-field>
+
+      <div class="transcript-actions">
+        <button
+          mat-flat-button
+          color="accent"
+          type="button"
+          class="parse-btn"
+          [disabled]="!transcriptText().trim() || isBusy"
+          (click)="parseManualText()"
+        >
+          <mat-icon>auto_awesome</mat-icon>
+          Parse Quotation
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Voice Examples / Presets -->
+    <div class="examples-container">
+      <span class="examples-label">Try Voice Examples:</span>
+      <div class="example-chips">
+        <button
+          type="button"
+          class="chip-btn"
+          (click)="loadExample('Create a quotation for Ravi Traders. Item HP LaserJet Printer, quantity 2, price 12000 each. Item A4 paper box, quantity 5, price 450 each. Add 18% GST.')"
+        >
+          Example 1: Ravi Traders
+        </button>
+        <button
+          type="button"
+          class="chip-btn"
+          (click)="loadExample('10 chairs 800 each, 2 tables 5k each.')"
+        >
+          Example 2: 10 chairs, 2 tables
+        </button>
+        <button
+          type="button"
+          class="chip-btn"
+          (click)="loadExample('3 laptops at fifteen thousand five hundred.')"
+        >
+          Example 3: 3 laptops
+        </button>
+        <button
+          type="button"
+          class="chip-btn"
+          (click)="loadExample('Quote for Ramesh Enterprises, add GST.')"
+        >
+          Example 4: Ramesh Enterprises
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

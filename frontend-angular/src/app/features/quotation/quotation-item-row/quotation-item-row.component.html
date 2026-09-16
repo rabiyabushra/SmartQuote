@@ -13,18 +13,6 @@
         placeholder="Item description"
       />
     </mat-form-field>
-    <app-mic-button
-      [quotationId]="quotationId"
-      fieldName="itemDescription"
-      fieldType="text"
-      [disabled]="disabled"
-      ariaLabel="Record item description"
-      (recognized)="onDescriptionVoice($event)"
-      (voiceError)="onVoiceError('description', $event)"
-    ></app-mic-button>
-    @if (descriptionError) {
-      <p class="item-row__error">{{ descriptionError }}</p>
-    }
   </div>
 
   <div class="item-row__field-group">
@@ -41,23 +29,11 @@
         (ngModelChange)="emitChange()"
       />
     </mat-form-field>
-    <app-mic-button
-      [quotationId]="quotationId"
-      fieldName="quantity"
-      fieldType="number"
-      [disabled]="disabled"
-      ariaLabel="Record quantity"
-      (recognized)="onQuantityVoice($event)"
-      (voiceError)="onVoiceError('quantity', $event)"
-    ></app-mic-button>
-    @if (quantityError) {
-      <p class="item-row__error">{{ quantityError }}</p>
-    }
   </div>
 
   <div class="item-row__field-group">
     <mat-form-field appearance="outline" class="item-row__field">
-      <mat-label>Rate</mat-label>
+      <mat-label>Rate (₹)</mat-label>
       <input
         matInput
         type="number"
@@ -69,18 +45,11 @@
         (ngModelChange)="emitChange()"
       />
     </mat-form-field>
-    <app-mic-button
-      [quotationId]="quotationId"
-      fieldName="rate"
-      fieldType="number"
-      [disabled]="disabled"
-      ariaLabel="Record rate or amount"
-      (recognized)="onRateVoice($event)"
-      (voiceError)="onVoiceError('rate', $event)"
-    ></app-mic-button>
-    @if (rateError) {
-      <p class="item-row__error">{{ rateError }}</p>
-    }
+  </div>
+
+  <div class="item-row__line-total">
+    <span class="total-label">Total:</span>
+    <span class="total-amount">₹{{ ((quantity || 0) * (rate || 0)) | number:'1.2-2' }}</span>
   </div>
 
   @if (removable) {

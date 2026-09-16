@@ -25,11 +25,16 @@ public class MongoConfig {
 
     @PostConstruct
     void ensureIndexes() {
-        index(User.class, "email", true);
-        index(Contact.class, "businessId", false);
-        index(Inventory.class, "businessId", false);
-        index(Quotation.class, "businessId", false);
-        index(Quotation.class, "quotationNumber", true);
+        try {
+            index(User.class, "email", true);
+            index(Contact.class, "businessId", false);
+            index(Inventory.class, "businessId", false);
+            index(Quotation.class, "businessId", false);
+            index(Quotation.class, "quotationNumber", true);
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(MongoConfig.class)
+                    .warn("Failed to ensure MongoDB indexes on startup: {}", e.getMessage());
+        }
     }
 
     private void index(Class<?> type, String field, boolean unique) {

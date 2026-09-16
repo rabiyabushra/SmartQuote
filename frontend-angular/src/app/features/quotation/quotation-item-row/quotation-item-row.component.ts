@@ -5,7 +5,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MicButtonComponent } from '../../../shared/components/mic-button/mic-button.component';
 
 export interface QuotationItemRowValue {
   lineNumber: number;
@@ -23,8 +22,7 @@ export interface QuotationItemRowValue {
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
-    MatButtonModule,
-    MicButtonComponent
+    MatButtonModule
   ],
   templateUrl: './quotation-item-row.component.html',
   styleUrl: './quotation-item-row.component.scss'

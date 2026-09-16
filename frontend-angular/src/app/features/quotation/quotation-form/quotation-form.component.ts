@@ -7,8 +7,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatChipsModule } from '@angular/material/chips';
 import { QuotationItemRowComponent, QuotationItemRowValue } from '../quotation-item-row/quotation-item-row.component';
 import { QuotationPreviewComponent } from '../quotation-preview/quotation-preview.component';
+import { VoiceQuotationMicComponent } from '../../../shared/components/voice-quotation-mic/voice-quotation-mic.component';
+import { ParsedQuotationResponse } from '../../../core/models/parsed-quotation.model';
 
 export interface ItemRowModel {
   lineNumber: number;
@@ -30,20 +33,25 @@ export interface ItemRowModel {
     MatButtonModule,
     MatIconModule,
     MatDividerModule,
+    MatChipsModule,
     QuotationItemRowComponent,
-    QuotationPreviewComponent
+    QuotationPreviewComponent,
+    VoiceQuotationMicComponent
   ],
   templateUrl: './quotation-form.component.html',
   styleUrl: './quotation-form.component.scss'
 })
 export class QuotationFormComponent {
   quotationId = signal<string>('QT-' + Math.floor(100000 + Math.random() * 900000));
-  customerName = signal<string>('Rajesh Enterprises');
+  customerName = signal<string>('Ravi Traders');
   customerPhone = signal<string>('+91 98765 43210');
   gstRate = signal<number>(18);
+  isReviewMode = signal<boolean>(false);
+  parseErrorMessage = signal<string>('');
 
   items = signal<ItemRowModel[]>([
-    { lineNumber: 1, itemDescription: 'Stainless steel fabrication work', quantity: 25, rate: 15000, unit: 'pcs' }
+    { lineNumber: 1, itemDescription: 'HP LaserJet Printer', quantity: 2, rate: 12000, unit: 'pcs' },
+    { lineNumber: 2, itemDescription: 'A4 Paper Box', quantity: 5, rate: 450, unit: 'box' }
   ]);
 
   subtotal = computed(() => {
@@ -61,6 +69,37 @@ export class QuotationFormComponent {
   grandTotal = computed(() => {
     return this.subtotal() + this.gstAmount();
   });
+
+  onQuotationParsed(parsed: ParsedQuotationResponse): void {
+    this.parseErrorMessage.set('');
+
+    if (parsed.customerName) {
+      this.customerName.set(parsed.customerName);
+    }
+    if (parsed.customerPhone) {
+      this.customerPhone.set(parsed.customerPhone);
+    }
+    if (parsed.taxPercentage !== undefined && parsed.taxPercentage !== null) {
+      this.gstRate.set(parsed.taxPercentage);
+    }
+
+    if (parsed.items && parsed.items.length > 0) {
+      const newRows: ItemRowModel[] = parsed.items.map((item, idx) => ({
+        lineNumber: idx + 1,
+        itemDescription: item.itemDescription,
+        quantity: item.quantity,
+        rate: item.rate,
+        unit: item.unit || 'pcs'
+      }));
+      this.items.set(newRows);
+    }
+
+    this.isReviewMode.set(true);
+  }
+
+  onParseError(error: string): void {
+    this.parseErrorMessage.set(error);
+  }
 
   addItemRow(): void {
     const current = this.items();
@@ -82,5 +121,9 @@ export class QuotationFormComponent {
       const filtered = rows.filter(r => r.lineNumber !== lineNumber);
       return filtered.map((item, index) => ({ ...item, lineNumber: index + 1 }));
     });
+  }
+
+  toggleReviewMode(): void {
+    this.isReviewMode.update(v => !v);
   }
 }

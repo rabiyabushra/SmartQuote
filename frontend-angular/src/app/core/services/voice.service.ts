@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { VoiceFieldName, VoiceTranscriptResponse } from '../models/voice.model';
+import { ParsedQuotationResponse } from '../models/parsed-quotation.model';
 
 export class VoiceServiceError extends Error {
   constructor(
@@ -174,6 +175,16 @@ export class VoiceService {
       );
   }
 
+  parseTranscript(transcript: string): Observable<ParsedQuotationResponse> {
+    return this.http
+      .post<ParsedQuotationResponse>(this.api.url('/quotations/parse'), { transcript })
+      .pipe(
+        catchError((error: HttpErrorResponse) =>
+          throwError(() => this.toVoiceServiceError(error))
+        )
+      );
+  }
+
   cancelRecording(): void {
     if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
       this.mediaRecorder.onstop = null;
@@ -255,11 +266,11 @@ export class VoiceService {
   private toVoiceServiceError(error: HttpErrorResponse): VoiceServiceError {
     const message = typeof error.error?.message === 'string'
       ? error.error.message
-      : 'Unable to recognize the audio. Please try again or enter the value manually.';
+      : 'Unable to process request. Please try again or enter text manually.';
 
     if (error.status === 0) {
       return new VoiceServiceError(
-        'Network error while sending audio. Please check your connection and try again.',
+        'Backend server is offline (http://localhost:8080). Please start the Spring Boot backend.',
         'network'
       );
     }

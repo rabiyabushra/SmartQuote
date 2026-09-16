@@ -1,11 +1,14 @@
 package com.smartquote.controller;
 
+import com.smartquote.dto.QuotationParseRequestDto;
+import com.smartquote.dto.ParsedQuotationResponseDto;
 import com.smartquote.dto.QuotationRequestDto;
 import com.smartquote.dto.QuotationResponseDto;
 import com.smartquote.model.*;
 import com.smartquote.repository.*;
 import com.smartquote.service.AuthService;
 import com.smartquote.service.PdfService;
+import com.smartquote.service.QuotationParserService;
 import com.smartquote.service.QuotationService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +25,7 @@ public class QuotationController {
     private final QuotationService quotationService;
     private final AuthService authService;
     private final PdfService pdfService;
+    private final QuotationParserService quotationParserService;
     private final BusinessRepository businessRepository;
     private final ContactRepository contactRepository;
     private final BankDetailsRepository bankDetailsRepository;
@@ -30,6 +34,7 @@ public class QuotationController {
     public QuotationController(QuotationService quotationService,
                                AuthService authService,
                                PdfService pdfService,
+                               QuotationParserService quotationParserService,
                                BusinessRepository businessRepository,
                                ContactRepository contactRepository,
                                BankDetailsRepository bankDetailsRepository,
@@ -37,10 +42,20 @@ public class QuotationController {
         this.quotationService = quotationService;
         this.authService = authService;
         this.pdfService = pdfService;
+        this.quotationParserService = quotationParserService;
         this.businessRepository = businessRepository;
         this.contactRepository = contactRepository;
         this.bankDetailsRepository = bankDetailsRepository;
         this.templateRepository = templateRepository;
+    }
+
+    @PostMapping("/parse")
+    public ParsedQuotationResponseDto parseTranscript(@Valid @RequestBody QuotationParseRequestDto request,
+                                                     @RequestHeader(required = false) HttpHeaders headers) {
+        if (headers != null) {
+            checkUserOrAllowGuest(headers);
+        }
+        return quotationParserService.parseQuotationTranscript(request.getTranscript());
     }
 
     @GetMapping
@@ -125,6 +140,13 @@ public class QuotationController {
         } catch (Exception ignored) {}
 
         return Map.of("pdfUrl", pdfUrl);
+    }
+
+    private void checkUserOrAllowGuest(HttpHeaders headers) {
+        String token = AuthHeaderUtil.extractToken(headers);
+        if (token != null) {
+            authService.resolveSession(token);
+        }
     }
 
     private User requireUser(HttpHeaders headers) {
