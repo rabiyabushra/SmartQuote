@@ -5,7 +5,8 @@ spring:
     import: optional:file:../.env[.properties]
   data:
     mongodb:
-      uri: ${MONGODB_URI}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/smartquote}
+      database: smartquote
   servlet:
     multipart:
       max-file-size: 25MB
