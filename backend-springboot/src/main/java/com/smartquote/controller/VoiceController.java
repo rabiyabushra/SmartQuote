@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/voice")
+@RequestMapping({"/api/voice", "/voice"})
 public class VoiceController {
 
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(

@@ -1,6 +1,8 @@
 // OtpService.java
 package com.smartquote.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,9 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class OtpService {
 
+    private static final Logger log = LoggerFactory.getLogger(OtpService.class);
     private static final int OTP_LENGTH = 6;
-    private static final long EXPIRY_SECONDS = 300; // 5 minutes
     private static final int MAX_ATTEMPTS = 5;
+
+    @Value("${app.auth.otp-expiry-seconds:1800}")
+    private long expirySeconds = 1800; // 30 minutes default
 
     private final SecureRandom random = new SecureRandom();
     private final ConcurrentHashMap<String, OtpEntry> store = new ConcurrentHashMap<>();
@@ -36,7 +41,7 @@ public class OtpService {
     /** Generates a new OTP for the given key (email or phone), replacing any previous one. */
     public String generate(String key) {
         String otp = String.format("%0" + OTP_LENGTH + "d", random.nextInt(1_000_000));
-        store.put(key, new OtpEntry(otp, Instant.now().plusSeconds(EXPIRY_SECONDS), 0));
+        store.put(key, new OtpEntry(otp, Instant.now().plusSeconds(expirySeconds), 0));
         
         // If the key looks like an email, send the OTP via email
         if (key.contains("@")) {
@@ -47,13 +52,20 @@ public class OtpService {
     }
 
     private void sendOtpEmail(String toEmail, String otp) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(fromEmail);
-        message.setTo(toEmail);
-        message.setSubject("Your OTP for SmartQuote");
-        message.setText("Your OTP is: " + otp + "\nThis OTP is valid for 5 minutes.");
-        
-        mailSender.send(message);
+        log.info("Generated OTP for {}: {}", toEmail, otp);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
+            message.setTo(toEmail);
+            message.setSubject("Your OTP for SmartQuote");
+            long minutes = Math.max(1, expirySeconds / 60);
+            message.setText("Your OTP is: " + otp + "\nThis OTP is valid for " + minutes + " minutes.");
+            
+            mailSender.send(message);
+            log.info("OTP email sent successfully to {}", toEmail);
+        } catch (Exception e) {
+            log.warn("Could not send email to {}: {}. OTP is available via dev endpoint or server logs: {}", toEmail, e.getMessage(), otp);
+        }
     }
 
     /** Verifies the OTP for a key. Consumes it on success; counts failed attempts otherwise. */

@@ -20,6 +20,8 @@ public class User {
     private Integer updatedBy;
     private java.time.Instant updatedOn;
     private String status;          // 'active' | 'inactive' | 'deleted'
+    private String sessionToken;
+    private java.time.Instant tokenExpiresAt;
 
     public User() {}
 
@@ -57,4 +59,10 @@ public class User {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getSessionToken() { return sessionToken; }
+    public void setSessionToken(String sessionToken) { this.sessionToken = sessionToken; }
+
+    public java.time.Instant getTokenExpiresAt() { return tokenExpiresAt; }
+    public void setTokenExpiresAt(java.time.Instant tokenExpiresAt) { this.tokenExpiresAt = tokenExpiresAt; }
 }

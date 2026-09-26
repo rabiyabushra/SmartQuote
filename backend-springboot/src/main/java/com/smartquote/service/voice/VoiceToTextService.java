@@ -15,7 +15,7 @@ import java.util.Locale;
 /**
  * Validates uploaded audio and delegates transcription to {@link SpeechToTextClient}.
  */
-@Service
+@Service("speechToTextVoiceService")
 @RequiredArgsConstructor
 @Slf4j
 public class VoiceToTextService {

@@ -35,7 +35,8 @@ public class AuthController {
                 request.getPassword()
         );
 
-        String token = UUID.randomUUID().toString();
+        java.time.Instant expiresAt = java.time.Instant.now().plus(30, java.time.temporal.ChronoUnit.DAYS);
+        String token = UUID.randomUUID().toString().replace("-", "") + "." + user.getId() + "." + expiresAt.toEpochMilli();
         authService.issueSession(token, user.getId());
 
         // Include business details in the auth response

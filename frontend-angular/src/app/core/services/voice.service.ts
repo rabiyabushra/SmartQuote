@@ -163,7 +163,7 @@ export class VoiceService {
     formData.append('audio', audio, this.resolveFileName(audio.type));
 
     return this.http
-      .post<VoiceTranscriptResponse>(this.api.url('/voice/transcribe'), formData)
+      .post<VoiceTranscriptResponse>(this.api.url('/api/voice/transcribe'), formData)
       .pipe(
         map((response) => ({
           ...response,
@@ -177,7 +177,7 @@ export class VoiceService {
 
   parseTranscript(transcript: string): Observable<ParsedQuotationResponse> {
     return this.http
-      .post<ParsedQuotationResponse>(this.api.url('/quotations/parse'), { transcript })
+      .post<ParsedQuotationResponse>(this.api.url('/api/quotations/parse'), { transcript })
       .pipe(
         catchError((error: HttpErrorResponse) =>
           throwError(() => this.toVoiceServiceError(error))

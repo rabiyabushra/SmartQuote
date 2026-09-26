@@ -21,7 +21,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
   
-  private readonly API_URL = `${environment.apiBaseUrl}/api/auth`;
+  private readonly API_URL = `${(environment.apiBaseUrl || '').replace(/\/api\/?$/, '').replace(/\/$/, '')}/api/auth`;
   private readonly TOKEN_KEY = 'smartquote_token';
   private readonly USER_KEY = 'smartquote_user';
 

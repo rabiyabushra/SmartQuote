@@ -3,19 +3,30 @@
   <!-- Top bar -->
   <header class="top-bar">
     <div class="brand">
-      <mat-icon class="brand-icon">assignment</mat-icon>
-      <span class="brand-name">Smart Quotation Builder</span>
+      <div class="brand-icon-wrapper">
+        <mat-icon class="brand-icon">receipt_long</mat-icon>
+      </div>
+      <div class="brand-info">
+        <div class="brand-title-row">
+          <span class="brand-name">SmartQuote</span>
+          <span class="brand-badge">PRO</span>
+        </div>
+        <span class="brand-subtitle">Quotation Management Dashboard</span>
+      </div>
     </div>
 
     <div class="top-bar-actions">
-      <button mat-icon-button [routerLink]="['/profile']" matTooltip="Profile">
-        <mat-icon>account_circle</mat-icon>
+      <button mat-stroked-button class="profile-btn" [routerLink]="['/profile']" matTooltip="View Profile">
+        <mat-icon class="profile-icon">account_circle</mat-icon>
+        <span class="profile-label">My Profile</span>
       </button>
+
       <button mat-flat-button color="primary" class="new-quotation-btn" (click)="onNewQuotation()">
         <mat-icon>add</mat-icon>
         New Quotation
       </button>
-      <button mat-icon-button (click)="signOut()" matTooltip="Sign out">
+
+      <button mat-icon-button class="logout-btn" (click)="signOut()" matTooltip="Sign out">
         <mat-icon>logout</mat-icon>
       </button>
     </div>
@@ -23,28 +34,63 @@
 
   <!-- Stats row -->
   <section class="stats-row">
-    <div class="stat-card">
-      <span class="stat-label">Total Quotations</span>
+    <div class="stat-card total">
+      <div class="stat-card-header">
+        <span class="stat-label">Total Quotations</span>
+        <div class="stat-icon-wrap total">
+          <mat-icon>receipt_long</mat-icon>
+        </div>
+      </div>
       <span class="stat-value">{{ stats().totalQuotations }}</span>
     </div>
-    <div class="stat-card">
-      <span class="stat-label">Draft</span>
+
+    <div class="stat-card draft">
+      <div class="stat-card-header">
+        <span class="stat-label">Draft</span>
+        <div class="stat-icon-wrap draft">
+          <mat-icon>edit_note</mat-icon>
+        </div>
+      </div>
       <span class="stat-value">{{ stats().draft }}</span>
     </div>
-    <div class="stat-card">
-      <span class="stat-label">Sent</span>
+
+    <div class="stat-card sent">
+      <div class="stat-card-header">
+        <span class="stat-label">Sent</span>
+        <div class="stat-icon-wrap sent">
+          <mat-icon>send</mat-icon>
+        </div>
+      </div>
       <span class="stat-value">{{ stats().sent }}</span>
     </div>
-    <div class="stat-card">
-      <span class="stat-label">Accepted</span>
+
+    <div class="stat-card accepted">
+      <div class="stat-card-header">
+        <span class="stat-label">Accepted</span>
+        <div class="stat-icon-wrap accepted">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+      </div>
       <span class="stat-value">{{ stats().accepted }}</span>
     </div>
-    <div class="stat-card">
-      <span class="stat-label">In Negotiation</span>
+
+    <div class="stat-card in-negotiation">
+      <div class="stat-card-header">
+        <span class="stat-label">Negotiation</span>
+        <div class="stat-icon-wrap in-negotiation">
+          <mat-icon>sync_alt</mat-icon>
+        </div>
+      </div>
       <span class="stat-value">{{ stats().inNegotiation }}</span>
     </div>
-    <div class="stat-card">
-      <span class="stat-label">Not Converted</span>
+
+    <div class="stat-card not-converted">
+      <div class="stat-card-header">
+        <span class="stat-label">Not Converted</span>
+        <div class="stat-icon-wrap not-converted">
+          <mat-icon>cancel</mat-icon>
+        </div>
+      </div>
       <span class="stat-value">{{ stats().notConverted }}</span>
     </div>
   </section>
@@ -52,8 +98,8 @@
   <!-- Filter row -->
   <section class="filter-row">
     <mat-form-field appearance="outline" class="search-field">
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput placeholder="Search Customers..." [formControl]="searchControl" />
+      <mat-icon matPrefix class="search-icon">search</mat-icon>
+      <input matInput placeholder="Search customers, quotes..." [formControl]="searchControl" />
     </mat-form-field>
 
     <button
@@ -64,36 +110,19 @@
       matBadgeSize="small"
       matBadgeColor="warn"
       [matBadgeHidden]="activeFilters().length === 0">
-
       <mat-icon>filter_list</mat-icon>
       Filter
     </button>
 
     <mat-form-field appearance="outline" class="date-range-field">
-
       <mat-date-range-input
         [formGroup]="dateRange"
         [rangePicker]="picker">
-
-        <input
-          matStartDate
-          formControlName="start"
-          placeholder="Start Date">
-
-        <input
-          matEndDate
-          formControlName="end"
-          placeholder="End Date">
-
+        <input matStartDate formControlName="start" placeholder="Start Date">
+        <input matEndDate formControlName="end" placeholder="End Date">
       </mat-date-range-input>
-
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="picker">
-      </mat-datepicker-toggle>
-
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
-
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="sort-field">
@@ -129,16 +158,18 @@
 
   <!-- Loading State -->
   <section class="loading-state" *ngIf="isLoading()">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p>Loading quotations...</p>
+    <mat-spinner diameter="44"></mat-spinner>
+    <p>Loading your quotations...</p>
   </section>
 
   <!-- Empty State -->
   <section class="empty-state" *ngIf="!isLoading() && quotations().length === 0">
-    <mat-icon class="empty-icon">description</mat-icon>
-    <h2>No quotations yet</h2>
-    <p>Create your first quotation to get started</p>
-    <button mat-flat-button color="primary" (click)="onNewQuotation()">
+    <div class="empty-icon-wrap">
+      <mat-icon class="empty-icon">description</mat-icon>
+    </div>
+    <h2>No quotations found</h2>
+    <p>Get started by creating your first professional quotation</p>
+    <button mat-flat-button color="primary" class="create-quote-btn" (click)="onNewQuotation()">
       <mat-icon>add</mat-icon>
       Create Quotation
     </button>
@@ -147,7 +178,7 @@
   <!-- Quotation cards -->
   <section class="quotation-grid" *ngIf="!isLoading() && view() === 'card' && quotations().length > 0">
     <div class="quotation-card" *ngFor="let q of quotations()" [ngClass]="statusColor(q.status)">
-      <div class="card-top-bar"></div>
+      <div class="card-top-bar" [ngClass]="statusColor(q.status)"></div>
 
       <div class="card-header">
         <div class="customer-info">
@@ -156,13 +187,22 @@
         </div>
         <div class="header-right">
           <span class="status-badge" [ngClass]="statusColor(q.status)">{{ q.status }}</span>
-          <button mat-icon-button [matMenuTriggerFor]="cardMenu">
+          <button mat-icon-button [matMenuTriggerFor]="cardMenu" class="more-btn">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #cardMenu="matMenu">
-            <button mat-menu-item [routerLink]="['/quotations', q.id, 'edit']">Edit</button>
-            <button mat-menu-item>Share</button>
-            <button mat-menu-item class="delete-item">Delete</button>
+            <button mat-menu-item [routerLink]="['/quotations', q.id, 'edit']">
+              <mat-icon>edit</mat-icon>
+              <span>Edit</span>
+            </button>
+            <button mat-menu-item>
+              <mat-icon>share</mat-icon>
+              <span>Share</span>
+            </button>
+            <button mat-menu-item class="delete-item">
+              <mat-icon>delete_outline</mat-icon>
+              <span>Delete</span>
+            </button>
           </mat-menu>
         </div>
       </div>
@@ -170,7 +210,7 @@
       <div class="card-body">
         <div class="detail-col">
           <span class="detail-label">QUOTE ID</span>
-          <span class="detail-value strong">{{ q.quoteId }}</span>
+          <span class="detail-value quote-id">{{ q.quoteId }}</span>
         </div>
         <div class="detail-col">
           <span class="detail-label">EMPLOYEE</span>
@@ -181,7 +221,7 @@
           <span class="detail-value">{{ q.city }}, {{ q.state }}</span>
         </div>
         <div class="detail-col">
-          <span class="detail-label">DATE CREATED</span>
+          <span class="detail-label">CREATED</span>
           <span class="detail-value">{{ q.dateCreated | date: 'MMM d, y' }}</span>
         </div>
       </div>
@@ -189,7 +229,7 @@
       <div class="follow-up-row" [class.overdue]="q.isFollowUpOverdue">
         <span class="detail-label">FOLLOW-UP</span>
         <span class="follow-up-value">
-          {{ q.followUpDate ? (q.followUpDate | date: 'MMM d, y') : '—' }}
+          {{ q.followUpDate ? (q.followUpDate | date: 'MMM d, y') : 'None scheduled' }}
           <mat-icon *ngIf="q.isFollowUpOverdue" class="overdue-icon" matTooltip="Follow-up overdue">warning</mat-icon>
         </span>
       </div>
@@ -208,13 +248,13 @@
         </mat-menu>
 
         <span class="action-icons">
-          <button mat-icon-button matTooltip="View" (click)="onViewQuotation(q.id)">
+          <button mat-icon-button matTooltip="View details" (click)="onViewQuotation(q.id)">
             <mat-icon>visibility</mat-icon>
           </button>
-          <button mat-icon-button matTooltip="Download" (click)="onDownloadQuotation(q.id)">
+          <button mat-icon-button matTooltip="Download PDF" (click)="onDownloadQuotation(q.id)">
             <mat-icon>file_download</mat-icon>
           </button>
-          <button mat-icon-button [matMenuTriggerFor]="cardMenu" matTooltip="More options">
+          <button mat-icon-button [matMenuTriggerFor]="cardMenu" matTooltip="More actions">
             <mat-icon>more_horiz</mat-icon>
           </button>
         </span>
@@ -224,7 +264,10 @@
 
   <!-- Table view placeholder -->
   <section class="quotation-table" *ngIf="!isLoading() && view() === 'table' && quotations().length > 0">
-    <p class="table-placeholder">Table view — build with mat-table once card view is confirmed with the team.</p>
+    <div class="table-placeholder-card">
+      <mat-icon>table_chart</mat-icon>
+      <p>Table view active. Switch to Card view using toolbar.</p>
+    </div>
   </section>
 
   <!-- Pagination -->
@@ -242,14 +285,6 @@
     </mat-paginator>
   </footer>
 
-  <!-- Card anatomy guide (dev reference from wireframe — remove before ship) -->
-  <section class="anatomy-guide">
-    <strong>CARD ANATOMY GUIDE</strong>
-    <p>Coloured top bar = status indicator. Each card shows: Customer name + contact · Quote ID · Status badge · Employee · City / State · Date Created · Follow-up date.</p>
-    <p>Actions per card: [Status ▾ change] [👁 View] [⬇ Download] [⋯ More options — edit, delete, share]</p>
-    <p>⚠ Red follow-up date = overdue or due today · Tooltip on hover shows full details</p>
-    <p>Toggle between Card view and Table view using the icon group in the toolbar (top-right of filter row)</p>
-  </section>
   <app-quotation-search-filter
     [isOpen]="showFilterDrawer()"
     (closed)="closeFilterDrawer()"

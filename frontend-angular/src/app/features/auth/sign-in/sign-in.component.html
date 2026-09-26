@@ -1,86 +1,104 @@
 <div class="sign-in-page">
-  <mat-card class="sign-in-card">
+  <div class="auth-container">
+    <mat-card class="sign-in-card">
 
-    <!-- Brand header -->
-    <div class="brand">
-      <mat-icon class="brand-icon">assignment</mat-icon>
-      <div class="brand-text">
-        <span class="brand-name">Smart Quotation Builder</span>
-        <span class="brand-tagline">Welcome back to your account</span>
+      <!-- Brand header -->
+      <div class="brand">
+        <div class="brand-icon-wrapper">
+          <mat-icon class="brand-icon">receipt_long</mat-icon>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title-row">
+            <span class="brand-name">SmartQuote</span>
+            <span class="brand-badge">PRO</span>
+          </div>
+          <span class="brand-tagline">Intelligent Quotation Management</span>
+        </div>
       </div>
-    </div>
 
-    <!-- Sign-in panel -->
-    <div class="sign-in-panel">
-      <h1 class="title">SIGN IN</h1>
+      <!-- Sign-in panel -->
+      <div class="sign-in-panel">
+        <div class="welcome-header">
+          <h1 class="title">Welcome Back</h1>
+          <p class="subtitle">Enter your credentials to access your quotations</p>
+        </div>
 
-      <form [formGroup]="signInForm" (ngSubmit)="onSubmit()" class="form">
+        <form [formGroup]="signInForm" (ngSubmit)="onSubmit()" class="form">
+          <div class="input-group">
+            <label class="field-label">Email Address</label>
+            <mat-form-field appearance="outline" class="full-width custom-field">
+              <mat-icon matPrefix class="field-prefix-icon">mail_outline</mat-icon>
+              <input
+                matInput
+                type="email"
+                formControlName="email"
+                placeholder="name@company.com"
+                autocomplete="email" />
+              <mat-error *ngIf="signInForm.get('email')?.hasError('required')">
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="signInForm.get('email')?.hasError('email')">
+                Enter a valid email address
+              </mat-error>
+            </mat-form-field>
+          </div>
 
+          <div class="input-group">
+            <div class="password-label-row">
+              <label class="field-label">Password</label>
+              <a routerLink="/auth/forgot-password" class="forgot-link">Forgot password?</a>
+            </div>
+            <mat-form-field appearance="outline" class="full-width custom-field">
+              <mat-icon matPrefix class="field-prefix-icon">lock_outline</mat-icon>
+              <input
+                matInput
+                [type]="hidePassword ? 'password' : 'text'"
+                formControlName="password"
+                placeholder="Enter your password"
+                autocomplete="current-password" />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="!hidePassword">
+                <mat-icon class="field-suffix-icon">{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+              <mat-error *ngIf="signInForm.get('password')?.hasError('required')">
+                Password is required
+              </mat-error>
+              <mat-error *ngIf="signInForm.get('password')?.hasError('minlength')">
+                Password must be at least 6 characters
+              </mat-error>
+            </mat-form-field>
+          </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label class="field-label">Email</mat-label>
-          <input
-            matInput
-            type="email"
-            formControlName="email"
-            placeholder="you@example.com"
-            autocomplete="email" />
-          <mat-error *ngIf="signInForm.get('email')?.hasError('required')">
-            Email is required
-          </mat-error>
-          <mat-error *ngIf="signInForm.get('email')?.hasError('email')">
-            Enter a valid email address
-          </mat-error>
-        </mat-form-field>
-
-        <label class="field-label">Password</label>
-        <mat-form-field appearance="outline" class="full-width">
-          <input
-            matInput
-            [type]="hidePassword ? 'password' : 'text'"
-            formControlName="password"
-            placeholder="Enter your password"
-            autocomplete="current-password" />
           <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="togglePasswordVisibility()"
-            [attr.aria-label]="'Hide password'"
-            [attr.aria-pressed]="!hidePassword">
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            mat-flat-button
+            color="primary"
+            type="submit"
+            class="full-width submit-btn"
+            [disabled]="isLoading">
+            <mat-spinner *ngIf="isLoading" diameter="22" class="btn-spinner"></mat-spinner>
+            <span *ngIf="!isLoading" class="btn-content">
+              Sign In
+              <mat-icon class="btn-icon">arrow_forward</mat-icon>
+            </span>
           </button>
-          <mat-error *ngIf="signInForm.get('password')?.hasError('required')">
-            Password is required
-          </mat-error>
-          <mat-error *ngIf="signInForm.get('password')?.hasError('minlength')">
-            Password must be at least 6 characters
-          </mat-error>
-        </mat-form-field>
+        </form>
 
-        <button
-          mat-flat-button
-          color="primary"
-          type="submit"
-          class="full-width submit-btn"
-          [disabled]="isLoading">
-          <mat-spinner *ngIf="isLoading" diameter="20" class="btn-spinner"></mat-spinner>
-          <span *ngIf="!isLoading">SIGN IN</span>
-        </button>
+        <div class="divider">
+          <span class="line"></span>
+          <span class="divider-text">NEW TO SMARTQUOTE?</span>
+          <span class="line"></span>
+        </div>
 
-        <a routerLink="/auth/forgot-password" class="forgot-link">Forgot Password?</a>
-      </form>
-
-      <div class="divider">
-        <span class="line"></span>
-        <span class="divider-text">OR</span>
-        <span class="line"></span>
+        <div class="footer-links">
+          <span>Don't have an account?</span>
+          <a routerLink="/auth/sign-up" class="create-account-link">Create Account</a>
+        </div>
       </div>
-
-      <div class="footer-links">
-        Don't have an account?
-        <a routerLink="/auth/sign-up" class="create-account-link">CREATE ACCOUNT</a>
-      </div>
-    </div>
-  </mat-card>
+    </mat-card>
+  </div>
 </div>

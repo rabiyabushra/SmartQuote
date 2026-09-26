@@ -37,14 +37,14 @@ export class WhatsAppShareService {
 
   generatePdf(quotationId: string): Promise<string> {
     return firstValueFrom(
-      this.http.post<{ pdfUrl: string }>(this.api.url(`/quotations/${quotationId}/pdf`), {})
+      this.http.post<{ pdfUrl: string }>(this.api.url(`/api/quotations/${quotationId}/pdf`), {})
     ).then((response) => response.pdfUrl)
      .catch(() => `http://localhost:8080/files/quotations/${quotationId}.pdf`);
   }
 
   getShareData(quotationId: string): Promise<ShareDataResponse> {
     return firstValueFrom(
-      this.http.get<ShareDataResponse>(this.api.url(`/quotations/${quotationId}/share/share-data`))
+      this.http.get<ShareDataResponse>(this.api.url(`/api/quotations/${quotationId}/share/share-data`))
     ).catch(() => ({
       message: `Quotation ${quotationId}`,
       pdfUrl: `http://localhost:8080/files/quotations/${quotationId}.pdf`,
@@ -54,7 +54,7 @@ export class WhatsAppShareService {
 
   logShare(quotationId: string, request: ShareLogRequest): Promise<void> {
     return firstValueFrom(
-      this.http.post(this.api.url(`/quotations/${quotationId}/share`), request)
+      this.http.post(this.api.url(`/api/quotations/${quotationId}/share`), request)
     ).then(() => undefined)
      .catch(() => undefined);
   }

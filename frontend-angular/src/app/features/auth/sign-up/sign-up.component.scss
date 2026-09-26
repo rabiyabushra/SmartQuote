@@ -1,39 +1,86 @@
 .sign-up-page {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 16px;
-  background: linear-gradient(135deg, #e8f0fe 0%, #f5f8ff 100%);
+  justify-content: flex-start;
+  padding: 32px 5vw;
+  box-sizing: border-box;
+  background-color: #e8f0fe;
+  background-image: url('/images/auth-bg.png');
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      rgba(240, 246, 255, 0.78) 0%,
+      rgba(240, 246, 255, 0.50) 50%,
+      rgba(240, 246, 255, 0.15) 100%
+    );
+    pointer-events: none;
+  }
+}
+
+.auth-container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 520px;
 }
 
 .sign-up-card {
   width: 100%;
-  max-width: 440px;
-  padding: 0;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.90) !important;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 24px !important;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.16),
+              0 0 0 1px rgba(255, 255, 255, 0.8),
+              0 8px 24px -4px rgba(37, 99, 235, 0.10) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 30px 60px -15px rgba(15, 23, 42, 0.20),
+                0 0 0 1px rgba(255, 255, 255, 0.9),
+                0 12px 28px -4px rgba(37, 99, 235, 0.15) !important;
+  }
 }
 
+// Brand Header
 .brand {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 20px 24px;
-  background: #f8fafc;
+  padding: 22px 28px 18px;
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.75) 0%, rgba(255, 255, 255, 0) 100%);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
 
-  .brand-icon {
-    background: #6b7280;
-    color: #fff;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 28px;
-    width: 28px;
-    height: 28px;
+  .brand-icon-wrapper {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 8px 16px -2px rgba(37, 99, 235, 0.35);
+
+    .brand-icon {
+      color: #ffffff;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
   }
 
   .brand-text {
@@ -41,35 +88,60 @@
     flex-direction: column;
   }
 
+  .brand-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .brand-name {
-    font-size: 17px;
+    font-size: 19px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.4px;
+  }
+
+  .brand-badge {
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+    font-size: 10px;
     font-weight: 700;
-    color: #111827;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    letter-spacing: 0.5px;
   }
 
   .brand-tagline {
     font-size: 12px;
-    color: #6b7280;
+    color: #64748b;
+    font-weight: 500;
     margin-top: 2px;
   }
 }
 
+// Sign-Up Panel
 .sign-up-panel {
-  padding: 24px 24px 20px;
+  padding: 22px 28px 24px;
 }
 
-.title {
-  font-size: 20px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 4px;
-}
+.welcome-header {
+  margin-bottom: 18px;
 
-.subtitle {
-  font-size: 13px;
-  color: #6b7280;
-  text-align: center;
-  margin-bottom: 20px;
+  .title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.3px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.5;
+  }
 }
 
 .form {
@@ -77,78 +149,191 @@
   flex-direction: column;
 }
 
-.field-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 4px;
-  margin-top: 4px;
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 540px) {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+.input-group {
+  margin-bottom: 10px;
+
+  .field-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 5px;
+  }
 }
 
 .full-width {
   width: 100%;
 }
 
+.phone-prefix {
+  font-weight: 600;
+  color: #64748b;
+  font-size: 13.5px;
+}
+
+.custom-field {
+  ::ng-deep {
+    .mat-mdc-text-field-wrapper {
+      background: #f8fafc !important;
+      border-radius: 12px !important;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .mat-mdc-form-field-focus-overlay {
+      background: transparent !important;
+    }
+
+    &.mat-focused .mat-mdc-text-field-wrapper {
+      background: #ffffff !important;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+    }
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #cbd5e1 !important;
+    }
+
+    &.mat-focused {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: #2563eb !important;
+        border-width: 1.5px !important;
+      }
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+      font-size: 11px;
+    }
+  }
+
+  .field-prefix-icon {
+    color: #94a3b8;
+    margin-right: 6px;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .field-suffix-icon {
+    color: #64748b;
+  }
+}
+
 .submit-btn {
   height: 48px;
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-top: 10px;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 14.5px !important;
+  box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.40) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+
+  &:hover:not([disabled]) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -4px rgba(37, 99, 235, 0.50) !important;
+  }
+
+  &:active:not([disabled]) {
+    transform: translateY(0);
+  }
+
+  .btn-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .btn-spinner {
   display: inline-block;
   ::ng-deep circle {
-    stroke: #fff;
+    stroke: #ffffff;
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 20px 0 14px;
+
+  .line {
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+  }
+
+  .divider-text {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.8px;
   }
 }
 
 .footer-links {
-  margin-top: 16px;
   text-align: center;
-  font-size: 13px;
-  color: #374151;
+  font-size: 13.5px;
+  color: #64748b;
 
   .sign-in-link {
-    color: #1a56db;
-    font-weight: 600;
-    text-decoration: underline;
-    margin-left: 4px;
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 6px;
+    transition: color 0.2s;
 
     &:hover {
-      color: #143f9e;
+      color: #1d4ed8;
+      text-decoration: underline;
     }
   }
 }
 
-@media (max-width: 380px) {
+// Responsive
+@media (max-width: 900px) {
+  .sign-up-page {
+    justify-content: center;
+    padding: 24px 16px;
+    background-position: center;
+
+    &::before {
+      background: rgba(240, 246, 255, 0.88);
+    }
+  }
+
+  .auth-container {
+    max-width: 480px;
+  }
+}
+
+@media (max-width: 480px) {
   .sign-up-panel {
-    padding: 20px 18px 16px;
+    padding: 18px 18px 22px;
   }
 
   .brand {
-    padding: 16px 18px;
+    padding: 18px 18px 14px;
   }
-}
-.divider {
-  border: none;
-  border-top: 1px solid #e5e7eb;
-  margin: 24px 0 16px;
-}
-.submit-btn {
-  transition: transform 0.2s ease;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-}
-.sign-up-card {
-  transition: transform 0.25s ease,
-              box-shadow 0.25s ease;
-}
-
-.sign-up-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(0,0,0,.12);
 }

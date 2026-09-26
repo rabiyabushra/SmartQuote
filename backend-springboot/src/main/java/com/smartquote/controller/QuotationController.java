@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/quotations")
+@RequestMapping({"/api/quotations", "/quotations"})
 public class QuotationController {
 
     private final QuotationService quotationService;
