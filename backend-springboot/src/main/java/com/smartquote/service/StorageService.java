@@ -33,12 +33,14 @@ public class StorageService {
             Files.createDirectories(dir);
 
             String safeName = sanitize(fileName);
-            String storedName = Instant.now().toEpochMilli() + "-" + UUID.randomUUID().toString().substring(0, 8) + "-" + safeName;
+            Path directTarget = dir.resolve(safeName);
+            Files.write(directTarget, content);
 
-            Path target = dir.resolve(storedName);
-            Files.write(target, content);
+            Path quotationsDir = dir.resolve("quotations");
+            Files.createDirectories(quotationsDir);
+            Files.write(quotationsDir.resolve(safeName), content);
 
-            return baseUrl + "/" + storedName;
+            return baseUrl + "/" + safeName;
         } catch (IOException e) {
             throw new IllegalStateException("Failed to store file '" + fileName + "': " + e.getMessage(), e);
         }

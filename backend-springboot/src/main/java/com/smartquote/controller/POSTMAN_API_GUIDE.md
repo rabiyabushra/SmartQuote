@@ -32,7 +32,7 @@ Auth (`/me`, `/sign-out`), Contacts, Customers, Inventory, Materials, Templates,
 4. Templates: List  (copy templateId)
 5. Quotations: Create → Generate PDF
 6. WhatsApp Share: Get Link → Log Share
-7. Voice: Transcribe (optional, needs audio file + WHISPER_API_KEY)
+7. Voice: Transcribe / Parse Quotation (100% free local parser)
 ```
 
 ---
@@ -302,7 +302,7 @@ All routes require `Authorization: Bearer <token>`.
 | fieldName | text | `itemDescription`, `quantity`, or `rate` |
 | audio | file | `.webm`, `.mp3`, or `.wav` recording |
 
-**Notes:** Set `WHISPER_API_KEY` env var for real transcription.
+**Notes:** Uses 100% free local parser without external API keys.
 
 ---
 

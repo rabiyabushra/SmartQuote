@@ -652,7 +652,7 @@
     },
     {
       "name": "Voice",
-      "description": "VoiceController — `/api/voice`. Multipart upload; needs WHISPER_API_KEY for real transcription.",
+      "description": "VoiceController — `/api/voice`. Multipart upload with 100% free local parser.",
       "item": [
         {
           "name": "Transcribe Audio",

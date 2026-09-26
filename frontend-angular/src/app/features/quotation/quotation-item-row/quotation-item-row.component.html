@@ -1,1 +1,67 @@
-<p>quotation-item-row works!</p>
+<div class="item-row">
+  <div class="item-row__line">#{{ lineNumber }}</div>
+
+  <div class="item-row__field-group item-row__field-group--description">
+    <mat-form-field appearance="outline" class="item-row__field">
+      <mat-label>Description</mat-label>
+      <input
+        matInput
+        name="itemDescription-{{ lineNumber }}"
+        [(ngModel)]="itemDescription"
+        [disabled]="disabled"
+        (ngModelChange)="emitChange()"
+        placeholder="Item description"
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="item-row__field-group">
+    <mat-form-field appearance="outline" class="item-row__field">
+      <mat-label>Qty</mat-label>
+      <input
+        matInput
+        type="number"
+        min="0"
+        step="1"
+        name="quantity-{{ lineNumber }}"
+        [(ngModel)]="quantity"
+        [disabled]="disabled"
+        (ngModelChange)="emitChange()"
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="item-row__field-group">
+    <mat-form-field appearance="outline" class="item-row__field">
+      <mat-label>Rate (₹)</mat-label>
+      <input
+        matInput
+        type="number"
+        min="0"
+        step="0.01"
+        name="rate-{{ lineNumber }}"
+        [(ngModel)]="rate"
+        [disabled]="disabled"
+        (ngModelChange)="emitChange()"
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="item-row__line-total">
+    <span class="total-label">Total:</span>
+    <span class="total-amount">₹{{ ((quantity || 0) * (rate || 0)) | number:'1.2-2' }}</span>
+  </div>
+
+  @if (removable) {
+    <button
+      type="button"
+      mat-icon-button
+      class="item-row__remove"
+      [disabled]="disabled"
+      aria-label="Remove item row"
+      (click)="onRemove()"
+    >
+      <mat-icon>delete_outline</mat-icon>
+    </button>
+  }
+</div>

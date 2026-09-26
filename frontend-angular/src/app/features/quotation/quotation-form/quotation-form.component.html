@@ -1,14 +1,141 @@
-<div class="quotation-form-page">
-  <a routerLink="/quotations" class="back-link">← Back to Quotations</a>
+<div class="quotation-form-container">
+  <!-- Step 1: Single Voice Input Hero Mic -->
+  <app-voice-quotation-mic
+    (quotationParsed)="onQuotationParsed($event)"
+    (parseError)="onParseError($event)"
+  ></app-voice-quotation-mic>
 
-  <ng-container [ngSwitch]="templateId()">
-    <app-job-work-quotation-form *ngSwitchCase="'job-work'" />
-    <app-fabrication-quotation-form *ngSwitchCase="'fabrication'" />
-    <app-supply-quotation-form *ngSwitchCase="'supply'" />
-    <app-service-quotation-form *ngSwitchCase="'service'" />
-    <app-maintenance-quotation-form *ngSwitchCase="'maintenance'" />
-    <p *ngSwitchDefault class="no-template">
-      No template selected. <a routerLink="/quotations">Go back</a> and start a new quotation to choose one.
-    </p>
-  </ng-container>
+  @if (parseErrorMessage()) {
+    <div class="error-banner">
+      <mat-icon>warning</mat-icon>
+      <span>{{ parseErrorMessage() }}</span>
+    </div>
+  }
+
+  <!-- Step 2: Structured Quotation Review & Edit Card -->
+  <mat-card class="quotation-card" [class.review-active]="isReviewMode()">
+    <mat-card-header class="quotation-card__header">
+      <div class="header-content">
+        <mat-card-title class="title">
+          <mat-icon class="header-icon">rate_review</mat-icon>
+          Quotation Review & Edit
+        </mat-card-title>
+        <mat-card-subtitle class="subtitle">
+          Verify and edit the AI-extracted quotation details below before generating PDF or sending via WhatsApp
+        </mat-card-subtitle>
+      </div>
+      <div class="quotation-badge">
+        <span class="badge-label">Quotation ID</span>
+        <span class="badge-value">{{ quotationId() }}</span>
+      </div>
+    </mat-card-header>
+
+    <mat-card-content class="quotation-card__content">
+      <!-- Customer Information Section -->
+      <section class="section customer-section">
+        <h3 class="section-title">
+          <mat-icon class="section-icon">person</mat-icon>
+          Customer Details
+        </h3>
+        <div class="customer-fields">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Customer / Business Name</mat-label>
+            <input
+              matInput
+              [ngModel]="customerName()"
+              (ngModelChange)="customerName.set($event)"
+              placeholder="e.g. Ravi Traders"
+            />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Customer Phone (WhatsApp)</mat-label>
+            <input
+              matInput
+              [ngModel]="customerPhone()"
+              (ngModelChange)="customerPhone.set($event)"
+              placeholder="+91 98765 43210"
+            />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Line Items Section -->
+      <section class="section items-section">
+        <div class="items-header">
+          <h3 class="section-title">
+            <mat-icon class="section-icon">inventory_2</mat-icon>
+            Quotation Line Items
+          </h3>
+          <button mat-flat-button color="primary" type="button" (click)="addItemRow()" class="add-item-btn">
+            <mat-icon>add</mat-icon>
+            Add Line Item
+          </button>
+        </div>
+
+        <div class="items-list">
+          @for (item of items(); track item.lineNumber) {
+            <app-quotation-item-row
+              [quotationId]="quotationId()"
+              [lineNumber]="item.lineNumber"
+              [itemDescription]="item.itemDescription"
+              [quantity]="item.quantity"
+              [rate]="item.rate"
+              [unit]="item.unit"
+              [removable]="items().length > 1"
+              (itemChange)="onItemChange($event)"
+              (remove)="onRemoveItem($event)"
+            ></app-quotation-item-row>
+          }
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- Calculation Summary -->
+      <section class="section calculation-section">
+        <div class="tax-field-wrapper">
+          <mat-form-field appearance="outline" class="tax-input">
+            <mat-label>GST Rate (%)</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="100"
+              [ngModel]="gstRate()"
+              (ngModelChange)="gstRate.set($event)"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="calculation-box">
+          <div class="calc-row">
+            <span>Subtotal</span>
+            <span class="calc-amount">₹{{ subtotal() | number:'1.2-2' }}</span>
+          </div>
+          <div class="calc-row">
+            <span>GST ({{ gstRate() }}%)</span>
+            <span class="calc-amount">₹{{ gstAmount() | number:'1.2-2' }}</span>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="calc-row calc-row--total">
+            <span>Grand Total</span>
+            <span class="calc-amount calc-amount--total">₹{{ grandTotal() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
+      <!-- PDF Generation & WhatsApp Share -->
+      <section class="section preview-section">
+        <app-quotation-preview
+          [quotationId]="quotationId()"
+          [customerPhone]="customerPhone()"
+        ></app-quotation-preview>
+      </section>
+    </mat-card-content>
+  </mat-card>
 </div>

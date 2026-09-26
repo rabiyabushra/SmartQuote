@@ -1,29 +1,67 @@
-<div class="preview-page">
-  <header class="preview-toolbar">
-    <button mat-button (click)="onBack()">
-      <mat-icon>arrow_back</mat-icon> Back to Quotations
-    </button>
-    <div class="toolbar-actions">
-      <button mat-stroked-button (click)="onEdit()">
-        <mat-icon>edit</mat-icon> Edit
-      </button>
-      <button mat-flat-button color="primary" (click)="onDownload()">
-        <mat-icon>file_download</mat-icon> Download PDF
-      </button>
-    </div>
+<section class="preview-panel">
+  <header class="preview-panel__header">
+    <h2>Quotation PDF & WhatsApp Share</h2>
+    <p>Generate your quotation PDF document and share it directly via WhatsApp.</p>
   </header>
 
-  <ng-container *ngIf="record() as rec; else notFound">
-    <ng-container [ngSwitch]="rec.templateId">
-      <app-job-work-quotation-view *ngSwitchCase="'job-work'" [data]="rec.formData" />
-      <app-fabrication-quotation-view *ngSwitchCase="'fabrication'" [data]="rec.formData" />
-      <app-supply-quotation-view *ngSwitchCase="'supply'" [data]="rec.formData" />
-      <app-service-quotation-view *ngSwitchCase="'service'" [data]="rec.formData" />
-      <app-maintenance-quotation-view *ngSwitchCase="'maintenance'" [data]="rec.formData" />
-    </ng-container>
-  </ng-container>
+  @if (pdfUrl()) {
+    <p class="preview-panel__pdf">
+      PDF Ready:
+      <a [href]="pdfUrl()!" target="_blank" rel="noopener noreferrer">View PDF Document</a>
+    </p>
+  }
 
-  <ng-template #notFound>
-    <p class="not-found">Quotation not found. <a routerLink="/quotations">Go back</a>.</p>
-  </ng-template>
-</div>
+  <div class="preview-panel__actions">
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="isGeneratingPdf() || !quotationId"
+      (click)="generatePdf()"
+    >
+      @if (isGeneratingPdf()) {
+        <mat-spinner diameter="18"></mat-spinner>
+      }
+      Generate PDF
+    </button>
+
+    <button
+      mat-stroked-button
+      type="button"
+      [disabled]="!quotationId"
+      (click)="downloadPdfFile()"
+    >
+      <mat-icon>download</mat-icon>
+      Download PDF
+    </button>
+
+    <mat-form-field appearance="outline" class="preview-panel__phone">
+      <mat-label>Customer Phone (WhatsApp)</mat-label>
+      <input matInput [(ngModel)]="phone" [placeholder]="customerPhone || '+919876543210'" />
+    </mat-form-field>
+
+    <button
+      mat-flat-button
+      color="accent"
+      type="button"
+      [disabled]="isSharing() || !quotationId"
+      (click)="shareViaWhatsApp()"
+      class="whatsapp-btn"
+    >
+      @if (isSharing()) {
+        <mat-spinner diameter="18"></mat-spinner>
+      } @else {
+        <mat-icon>share</mat-icon>
+      }
+      Share via WhatsApp
+    </button>
+  </div>
+
+  @if (statusMessage()) {
+    <p class="preview-panel__status">{{ statusMessage() }}</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="preview-panel__error">{{ errorMessage() }}</p>
+  }
+</section>

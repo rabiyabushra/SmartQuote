@@ -11,6 +11,7 @@ frontend-angular/.vscode/
 
 # ---- Spring Boot / Maven / Java ----
 backend-springboot/target/
+backend-springboot/storage/
 backend-springboot/.mvn/
 backend-springboot/*.class
 backend-springboot/.idea/

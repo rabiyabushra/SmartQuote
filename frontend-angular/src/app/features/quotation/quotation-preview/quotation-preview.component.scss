@@ -1,24 +1,40 @@
-.preview-page {
-  padding: 20px 24px 60px;
-  background: #f3f4f6;
-  min-height: 100vh;
+.preview-panel {
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: #fff;
 }
 
-.preview-toolbar {
+.preview-panel__header h2 {
+  margin: 0 0 0.35rem;
+}
+
+.preview-panel__header p {
+  margin: 0 0 1rem;
+  color: #607d8b;
+}
+
+.preview-panel__actions {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   align-items: center;
-  max-width: 850px;
-  margin: 0 auto 16px;
-
-  .toolbar-actions {
-    display: flex;
-    gap: 8px;
-  }
 }
 
-.not-found {
-  text-align: center;
-  color: #6b7280;
-  padding: 60px 0;
+.preview-panel__phone {
+  min-width: 16rem;
+}
+
+.preview-panel__pdf {
+  margin: 0 0 1rem;
+}
+
+.preview-panel__status {
+  margin: 1rem 0 0;
+  color: #2e7d32;
+}
+
+.preview-panel__error {
+  margin: 1rem 0 0;
+  color: #c62828;
 }
