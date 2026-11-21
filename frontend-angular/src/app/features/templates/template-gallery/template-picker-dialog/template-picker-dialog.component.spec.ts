@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatDialogRef } from '@angular/material/dialog';
 import { TemplatePickerDialogComponent } from './template-picker-dialog.component';
 
 describe('TemplatePickerDialogComponent', () => {
@@ -8,7 +8,10 @@ describe('TemplatePickerDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TemplatePickerDialogComponent]
+      imports: [TemplatePickerDialogComponent],
+      providers: [
+        { provide: MatDialogRef, useValue: { close: jasmine.createSpy('close') } }
+      ]
     })
     .compileComponents();
 

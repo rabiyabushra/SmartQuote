@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { QuotationSearchFilterComponent } from './quotation-search-filter.component';
 
@@ -8,7 +9,8 @@ describe('QuotationSearchFilterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QuotationSearchFilterComponent]
+      imports: [QuotationSearchFilterComponent],
+      providers: [provideNoopAnimations()]
     })
     .compileComponents();
 

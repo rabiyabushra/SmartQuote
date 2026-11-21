@@ -18,25 +18,77 @@
       <div class="header-content">
         <mat-card-title class="title">
           <mat-icon class="header-icon">rate_review</mat-icon>
-          Quotation Review & Edit
+          Quotation Builder
         </mat-card-title>
         <mat-card-subtitle class="subtitle">
-          Verify and edit the AI-extracted quotation details below before generating PDF or sending via WhatsApp
+          Create or customize your commercial quotation with voice-assisted entry and automated GST calculation
         </mat-card-subtitle>
       </div>
       <div class="quotation-badge">
-        <span class="badge-label">Quotation ID</span>
+        <span class="badge-label">Quote Ref</span>
         <span class="badge-value">{{ quotationId() }}</span>
       </div>
     </mat-card-header>
 
     <mat-card-content class="quotation-card__content">
+      <!-- Template & Date Configuration -->
+      <section class="section config-section">
+        <h3 class="section-title">
+          <mat-icon class="section-icon">settings</mat-icon>
+          Template &amp; Timeline
+        </h3>
+        <div class="form-grid-3">
+          <mat-form-field appearance="outline">
+            <mat-label>Quotation Template</mat-label>
+            <mat-select [ngModel]="selectedTemplateId()" (ngModelChange)="selectedTemplateId.set($event)">
+              @for (tpl of templates(); track tpl.id) {
+                <mat-option [value]="tpl.id">{{ tpl.name }}</mat-option>
+              }
+              @if (templates().length === 0) {
+                <mat-option value="fabrication">Fabrication Work Quotation</mat-option>
+                <mat-option value="job-work">Job Work Quotation</mat-option>
+                <mat-option value="service">Service Quotation</mat-option>
+                <mat-option value="supply">Supply Quotation</mat-option>
+                <mat-option value="maintenance">Maintenance Quotation</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Quotation Date</mat-label>
+            <input matInput type="date" [ngModel]="quotationDate()" (ngModelChange)="quotationDate.set($event)" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Valid Until Date</mat-label>
+            <input matInput type="date" [ngModel]="dueDate()" (ngModelChange)="dueDate.set($event)" />
+          </mat-form-field>
+        </div>
+      </section>
+
+      <mat-divider></mat-divider>
+
       <!-- Customer Information Section -->
       <section class="section customer-section">
         <h3 class="section-title">
           <mat-icon class="section-icon">person</mat-icon>
           Customer Details
         </h3>
+
+        @if (customers().length > 0) {
+          <div style="margin-bottom: 12px;">
+            <mat-form-field appearance="outline" style="width: 100%;">
+              <mat-label>Select Existing Customer (optional)</mat-label>
+              <mat-select [ngModel]="selectedContactId()" (ngModelChange)="onCustomerSelect($event)">
+                <mat-option value="">-- Enter New / Custom Customer Below --</mat-option>
+                @for (c of customers(); track c.id) {
+                  <mat-option [value]="c.id">{{ c.companyName || c.contactPerson }} ({{ c.phone }})</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        }
+
         <div class="customer-fields">
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Customer / Business Name</mat-label>
@@ -57,6 +109,16 @@
               placeholder="+91 98765 43210"
             />
           </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Customer State (for GST)</mat-label>
+            <input
+              matInput
+              [ngModel]="customerState()"
+              (ngModelChange)="customerState.set($event)"
+              placeholder="e.g. Karnataka"
+            />
+          </mat-form-field>
         </div>
       </section>
 
@@ -67,7 +129,7 @@
         <div class="items-header">
           <h3 class="section-title">
             <mat-icon class="section-icon">inventory_2</mat-icon>
-            Quotation Line Items
+            Quotation Line Items (Voice-Ready)
           </h3>
           <button mat-flat-button color="primary" type="button" (click)="addItemRow()" class="add-item-btn">
             <mat-icon>add</mat-icon>
@@ -108,6 +170,18 @@
               (ngModelChange)="gstRate.set($event)"
             />
           </mat-form-field>
+
+          <mat-form-field appearance="outline" class="tax-input" style="margin-left: 12px;">
+            <mat-label>Discount (%)</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="100"
+              [ngModel]="discountPercentage()"
+              (ngModelChange)="discountPercentage.set($event)"
+            />
+          </mat-form-field>
         </div>
 
         <div class="calculation-box">
@@ -115,6 +189,12 @@
             <span>Subtotal</span>
             <span class="calc-amount">₹{{ subtotal() | number:'1.2-2' }}</span>
           </div>
+          @if (discountAmount() > 0) {
+            <div class="calc-row" style="color: #dc2626;">
+              <span>Discount ({{ discountPercentage() }}%)</span>
+              <span class="calc-amount">- ₹{{ discountAmount() | number:'1.2-2' }}</span>
+            </div>
+          }
           <div class="calc-row">
             <span>GST ({{ gstRate() }}%)</span>
             <span class="calc-amount">₹{{ gstAmount() | number:'1.2-2' }}</span>
@@ -127,9 +207,41 @@
         </div>
       </section>
 
-      <mat-divider></mat-divider>
+      <!-- Primary Form Submission Action Bar -->
+      <div class="form-submit-actions">
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="saveQuotation(false)"
+          [disabled]="isSaving()"
+        >
+          @if (isSaving()) {
+            <mat-spinner diameter="18" style="display:inline-block; margin-right: 6px;"></mat-spinner>
+          } @else {
+            <mat-icon>save</mat-icon>
+          }
+          Save as Draft
+        </button>
 
-      <!-- PDF Generation & WhatsApp Share -->
+        <button
+          mat-flat-button
+          color="primary"
+          type="button"
+          (click)="saveQuotation(true)"
+          [disabled]="isSaving()"
+        >
+          @if (isSaving()) {
+            <mat-spinner diameter="18" style="display:inline-block; margin-right: 6px;"></mat-spinner>
+          } @else {
+            <mat-icon>visibility</mat-icon>
+          }
+          Save &amp; View Preview
+        </button>
+      </div>
+
+      <mat-divider style="margin: 24px 0;"></mat-divider>
+
+      <!-- Direct PDF Generation & WhatsApp Share -->
       <section class="section preview-section">
         <app-quotation-preview
           [quotationId]="quotationId()"

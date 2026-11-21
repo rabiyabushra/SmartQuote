@@ -77,10 +77,16 @@ public class WhatsAppService {
      */
     public String buildWhatsAppShareLink(String phone, Quotation quotation, String pdfUrl) {
         String digitsOnly = phone == null ? "" : phone.replaceAll("[^0-9]", "");
+        String quoteNum = quotation != null && quotation.getQuotationNumber() != null
+                ? quotation.getQuotationNumber()
+                : "Quotation";
+        String message = "Hello, please find your quotation (" + quoteNum + ") here: " + (pdfUrl != null ? pdfUrl : "");
+        String encodedText = urlEncode(message);
+
         if (digitsOnly.isEmpty()) {
-            return "https://web.whatsapp.com";
+            return "https://web.whatsapp.com/send?text=" + encodedText;
         }
-        return "https://wa.me/" + digitsOnly;
+        return "https://wa.me/" + digitsOnly + "?text=" + encodedText;
     }
 
     private String urlEncode(String value) {

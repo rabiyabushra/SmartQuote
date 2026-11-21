@@ -1,6 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { CustomerService, Customer } from '../../../core/services/customer.service';
+import { CustomerDialogComponent } from './customer-dialog.component';
 import { debounceTime } from 'rxjs';
 
 @Component({
@@ -19,7 +19,6 @@ import { debounceTime } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    RouterLink,
     ReactiveFormsModule,
     MatTableModule,
     MatButtonModule,
@@ -89,13 +88,31 @@ export class CustomerListComponent implements OnInit {
   }
 
   onAddCustomer(): void {
-    // TODO: Open customer form dialog
-    this.snackBar.open('Customer form dialog not yet implemented', 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(CustomerDialogComponent, {
+      width: '560px',
+      data: { customer: null }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Customer added successfully', 'Close', { duration: 3000 });
+        this.loadCustomers();
+      }
+    });
   }
 
   onEditCustomer(customer: Customer): void {
-    // TODO: Open edit customer dialog
-    this.snackBar.open(`Edit customer: ${customer.companyName} (not yet implemented)`, 'Close', { duration: 3000 });
+    const dialogRef = this.dialog.open(CustomerDialogComponent, {
+      width: '560px',
+      data: { customer }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Customer updated successfully', 'Close', { duration: 3000 });
+        this.loadCustomers();
+      }
+    });
   }
 
   onDeleteCustomer(customer: Customer): void {

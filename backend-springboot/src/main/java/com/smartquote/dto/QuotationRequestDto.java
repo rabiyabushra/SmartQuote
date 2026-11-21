@@ -9,11 +9,10 @@ import java.util.List;
 
 public class QuotationRequestDto {
 
-    @NotBlank
     private String businessId;
-
-    @NotBlank
     private String contactId;
+    private String customerName;
+    private String customerPhone;
 
     private String templateId;
     private String bankId;
@@ -62,6 +61,12 @@ public class QuotationRequestDto {
 
     public String getContactId() { return contactId; }
     public void setContactId(String contactId) { this.contactId = contactId; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getCustomerPhone() { return customerPhone; }
+    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
 
     public String getTemplateId() { return templateId; }
     public void setTemplateId(String templateId) { this.templateId = templateId; }

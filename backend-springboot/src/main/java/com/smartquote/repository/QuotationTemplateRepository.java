@@ -6,4 +6,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface QuotationTemplateRepository extends MongoRepository<QuotationTemplate, String> {
     java.util.List<QuotationTemplate> findByBusinessId(String businessId);
+    java.util.List<QuotationTemplate> findByBusinessIdOrBusinessIdIsNull(String businessId);
+    java.util.Optional<QuotationTemplate> findByTemplateType(String templateType);
 }

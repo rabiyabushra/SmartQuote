@@ -4,9 +4,11 @@ import com.smartquote.dto.voice.VoiceTranscriptResponse;
 import com.smartquote.exception.GlobalExceptionHandler;
 import com.smartquote.exception.InvalidAudioException;
 import com.smartquote.exception.SpeechToTextNotConfiguredException;
+import com.smartquote.service.AuthService;
 import com.smartquote.service.voice.VoiceToTextService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -21,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(VoiceController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @Import(GlobalExceptionHandler.class)
 class VoiceControllerTest {
 
@@ -29,6 +32,9 @@ class VoiceControllerTest {
 
     @MockitoBean
     private VoiceToTextService voiceToTextService;
+
+    @MockitoBean
+    private AuthService authService;
 
     @Test
     void transcribe_shouldReturn200WithTranscript() throws Exception {

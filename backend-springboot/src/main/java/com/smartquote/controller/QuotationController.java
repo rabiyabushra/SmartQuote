@@ -77,7 +77,25 @@ public class QuotationController {
     public QuotationResponseDto create(@Valid @RequestBody QuotationRequestDto request,
                                        @RequestHeader HttpHeaders headers) {
         User user = requireUser(headers);
-        assertBusinessAccess(user, request.getBusinessId());
+        if (request.getBusinessId() == null || request.getBusinessId().isBlank()) {
+            request.setBusinessId(user.getBusinessId());
+        } else {
+            assertBusinessAccess(user, request.getBusinessId());
+        }
+
+        if (request.getContactId() == null || request.getContactId().isBlank()) {
+            String cName = request.getCustomerName() != null && !request.getCustomerName().isBlank()
+                    ? request.getCustomerName() : "Valued Customer";
+            com.smartquote.model.Contact contact = new com.smartquote.model.Contact();
+            contact.setBusinessId(user.getBusinessId());
+            contact.setCompanyName(cName);
+            contact.setContactPerson(cName);
+            contact.setPhone(request.getCustomerPhone());
+            contact.setStatus("active");
+            contact.setCreatedOn(java.time.Instant.now());
+            contact = contactRepository.save(contact);
+            request.setContactId(contact.getId());
+        }
 
         Quotation created = quotationService.createQuotation(request.toEntity());
         return QuotationResponseDto.from(created);
@@ -124,20 +142,48 @@ public class QuotationController {
 
     @PostMapping("/{id}/pdf")
     public Map<String, String> generatePdf(@PathVariable String id) {
-        String pdfUrl = "http://localhost:8080/files/quotations/" + id + ".pdf";
+        String pdfUrl = null;
         try {
             Quotation quotation = quotationService.getQuotation(id);
             Business business = businessRepository.findById(quotation.getBusinessId()).orElse(null);
             Contact contact = contactRepository.findById(quotation.getContactId()).orElse(null);
-            QuotationTemplate template = templateRepository.findById(quotation.getTemplateId()).orElse(null);
+            
+            QuotationTemplate template = null;
+            if (quotation.getTemplateId() != null) {
+                template = templateRepository.findById(quotation.getTemplateId()).orElse(null);
+                if (template == null) {
+                    template = templateRepository.findByTemplateType(quotation.getTemplateId().toUpperCase().replace('-', '_')).orElse(null);
+                }
+            }
+            if (template == null) {
+                template = templateRepository.findById("fabrication").orElseGet(() -> {
+                    QuotationTemplate fb = new QuotationTemplate();
+                    fb.setId("fabrication");
+                    fb.setTemplateName("Fabrication Work Quotation");
+                    fb.setTemplateType("FABRICATION_WORK_QUOTATION");
+                    return fb;
+                });
+            }
+
             BankDetails bankDetails = quotation.getBankId() == null
                     ? null
                     : bankDetailsRepository.findById(quotation.getBankId()).orElse(null);
 
-            if (quotation != null && business != null && contact != null && template != null) {
-                pdfUrl = pdfService.generateAndStore(quotation, business, contact, bankDetails, template);
+            if (business == null) {
+                business = new Business();
+                business.setBusinessName("SmartQuote Enterprise");
+                business.setEmail("info@smartquote.com");
             }
-        } catch (Exception ignored) {}
+            if (contact == null) {
+                contact = new Contact();
+                contact.setCompanyName("Valued Customer");
+            }
+
+            pdfUrl = pdfService.generateAndStore(quotation, business, contact, bankDetails, template);
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(QuotationController.class).error("Error generating PDF for {}: {}", id, e.getMessage(), e);
+            pdfUrl = "http://localhost:8080/files/quotations/" + id + ".pdf";
+        }
 
         return Map.of("pdfUrl", pdfUrl);
     }

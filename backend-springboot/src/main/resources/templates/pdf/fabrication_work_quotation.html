@@ -1,81 +1,329 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <title th:text="${quotation.quotationNumber}">Quotation</title>
+    <meta charset="UTF-8" />
+    <title th:text="${quotation.quotationNumber} + ' - Fabrication Quotation'">Fabrication Work Quotation</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; color: #222; }
-        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-        th, td { border: 1px solid #ccc; padding: 6px; text-align: left; }
-        th { background: #f5f5f5; }
-        .totals { margin-top: 16px; width: 40%; margin-left: auto; }
-        .meta { margin: 8px 0; }
+        @page {
+            size: A4 portrait;
+            margin: 15mm 12mm 15mm 12mm;
+        }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11px;
+            color: #1e293b;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+        }
+        .header-table {
+            width: 100%;
+            border-bottom: 2px solid #1e3c72;
+            padding-bottom: 12px;
+            margin-bottom: 14px;
+        }
+        .header-table td {
+            vertical-align: top;
+            border: none;
+            padding: 0;
+        }
+        .brand-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1e3c72;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .business-sub {
+            font-size: 10px;
+            color: #475569;
+            margin-top: 3px;
+        }
+        .quote-badge {
+            text-align: right;
+        }
+        .doc-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2a5298;
+            text-transform: uppercase;
+        }
+        .quote-meta {
+            font-size: 10px;
+            color: #334155;
+            margin-top: 4px;
+        }
+        .parties-table {
+            width: 100%;
+            margin-bottom: 14px;
+            border-collapse: collapse;
+        }
+        .parties-table td {
+            width: 50%;
+            vertical-align: top;
+            border: 1px solid #cbd5e1;
+            padding: 8px 10px;
+            background-color: #f8fafc;
+        }
+        .party-header {
+            font-size: 11px;
+            font-weight: bold;
+            color: #1e3c72;
+            border-bottom: 1px solid #cbd5e1;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            margin-bottom: 14px;
+        }
+        .items-table th {
+            background-color: #1e3c72;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 7px 5px;
+            text-align: left;
+            border: 1px solid #1e3c72;
+        }
+        .items-table th.num, .items-table td.num {
+            text-align: right;
+        }
+        .items-table th.center, .items-table td.center {
+            text-align: center;
+        }
+        .items-table td {
+            border: 1px solid #e2e8f0;
+            padding: 6px 5px;
+            font-size: 10px;
+        }
+        .items-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .bottom-section {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 6px;
+            page-break-inside: avoid;
+        }
+        .bottom-section td {
+            vertical-align: top;
+            border: none;
+            padding: 0;
+        }
+        .notes-col {
+            width: 58%;
+            padding-right: 15px;
+        }
+        .totals-col {
+            width: 42%;
+        }
+        .totals-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #cbd5e1;
+        }
+        .totals-table td {
+            padding: 5px 8px;
+            font-size: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .totals-table td.val {
+            text-align: right;
+            font-weight: bold;
+        }
+        .grand-total-row {
+            background-color: #1e3c72;
+            color: #ffffff;
+        }
+        .grand-total-row td {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 7px 8px;
+            color: #ffffff;
+        }
+        .bank-box {
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+            padding: 8px;
+            margin-top: 10px;
+            border-radius: 4px;
+        }
+        .box-title {
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+        }
+        .terms-box {
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fafafa;
+            font-size: 9px;
+            color: #475569;
+        }
+        .sig-table {
+            width: 100%;
+            margin-top: 25px;
+            border-collapse: collapse;
+            page-break-inside: avoid;
+        }
+        .sig-table td {
+            border: none;
+            vertical-align: bottom;
+            font-size: 10px;
+        }
     </style>
 </head>
 <body>
-<div th:utext="${headerHtml}"></div>
 
-<div class="meta">
-    <div><strong>Quotation No:</strong> <span th:text="${quotation.quotationNumber}"></span></div>
-    <div><strong>Date:</strong> <span th:text="${quotation.quotationDate}"></span></div>
-    <div><strong>Customer:</strong> <span th:text="${contact.companyName}"></span></div>
-    <div><strong>Generated:</strong> <span th:text="${generatedOn}"></span></div>
-</div>
+    <table class="header-table">
+        <tr>
+            <td style="width: 55%;">
+                <div class="brand-title" th:text="${business != null and business.businessName != null ? business.businessName : 'SMARTQUOTE FABRICATION WORKS'}">FABRICATION ENTERPRISES</div>
+                <div class="business-sub">
+                    <span th:if="${business != null and business.address != null}" th:text="${business.address} + ', '">12 Industrial Estate, </span>
+                    <span th:if="${business != null and business.city != null}" th:text="${business.city} + ' - '">Peenya, </span>
+                    <span th:if="${business != null and business.state != null}" th:text="${business.state}">Karnataka</span>
+                    <span th:if="${business != null and business.pincode != null}" th:text="' - ' + ${business.pincode}"> - 560058</span>
+                </div>
+                <div class="business-sub">
+                    <span th:if="${business != null and business.phone != null}">Phone: <span th:text="${business.phone}">+91 98765 43210</span> | </span>
+                    <span th:if="${business != null and business.email != null}">Email: <span th:text="${business.email}">sales@fabrication.com</span></span>
+                </div>
+                <div class="business-sub" th:if="${business != null and business.gstin != null}">
+                    <strong>GSTIN:</strong> <span th:text="${business.gstin}">29AAAAA0000A1Z5</span>
+                </div>
+            </td>
+            <td class="quote-badge" style="width: 45%;">
+                <div class="doc-title">FABRICATION WORK QUOTATION</div>
+                <div class="quote-meta"><strong>Quote Ref:</strong> <span th:text="${quotation.quotationNumber}">QT-2026-0001</span></div>
+                <div class="quote-meta"><strong>Date:</strong> <span th:text="${quotation.quotationDate != null ? quotation.quotationDate : generatedOn}">21 Nov 2026</span></div>
+                <div class="quote-meta" th:if="${quotation.dueDate != null}"><strong>Valid Until:</strong> <span th:text="${quotation.dueDate}">05 Dec 2026</span></div>
+                <div class="quote-meta"><strong>Supply Type:</strong> <span th:text="${quotation.isInterstate != null and quotation.isInterstate ? 'Inter-State (IGST)' : 'Intra-State (CGST + SGST)'}">Intra-State</span></div>
+            </td>
+        </tr>
+    </table>
 
-<table>
-    <thead>
-    <tr>
-        <th>#</th>
-        <th>Description</th>
-        <th>HSN/SAC</th>
-        <th>Qty</th>
-        <th>Unit</th>
-        <th>Rate</th>
-        <th>Amount</th>
-        <th>Tax</th>
-        <th>Total</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="item, stat : ${items}">
-        <td th:text="${stat.count}"></td>
-        <td th:text="${item.itemDescription}"></td>
-        <td th:text="${item.hsnSacCode}"></td>
-        <td th:text="${item.quantity}"></td>
-        <td th:text="${item.unit}"></td>
-        <td th:text="${item.rate}"></td>
-        <td th:text="${item.amount}"></td>
-        <td th:text="${item.taxAmount}"></td>
-        <td th:text="${item.totalAmount}"></td>
-    </tr>
-    </tbody>
-</table>
+    <table class="parties-table">
+        <tr>
+            <td>
+                <div class="party-header">Quotation Issued By</div>
+                <div style="font-weight: bold; font-size: 11px;" th:text="${business != null and business.businessName != null ? business.businessName : 'SmartQuote Works'}">Business Name</div>
+                <div th:if="${business != null and business.ownerName != null}">Attn: <span th:text="${business.ownerName}">Owner</span></div>
+                <div th:if="${business != null and business.address != null}" th:text="${business.address}">Address</div>
+                <div th:if="${business != null and business.phone != null}">Phone: <span th:text="${business.phone}">Phone</span></div>
+                <div th:if="${business != null and business.state != null}">State: <span th:text="${business.state}">State</span></div>
+            </td>
+            <td>
+                <div class="party-header">Quotation For (Client / Customer)</div>
+                <div style="font-weight: bold; font-size: 11px;" th:text="${contact != null and contact.companyName != null ? contact.companyName : (contact != null and contact.contactPerson != null ? contact.contactPerson : (quotation.billingAddress != null ? quotation.billingAddress : 'Valued Customer'))}">Client Company</div>
+                <div th:if="${contact != null and contact.contactPerson != null and contact.companyName != null}">Kind Attn: <span th:text="${contact.contactPerson}">Contact Person</span></div>
+                <div th:if="${contact != null and contact.phone != null}">Phone: <span th:text="${contact.phone}">+91 9876543210</span></div>
+                <div th:if="${contact != null and contact.email != null}">Email: <span th:text="${contact.email}">client@example.com</span></div>
+                <div th:if="${contact != null and contact.gstin != null}"><strong>GSTIN:</strong> <span th:text="${contact.gstin}">29ABCDE1234F1Z5</span></div>
+                <div th:if="${contact != null and contact.state != null}">State of Supply: <span th:text="${contact.state}">Karnataka</span></div>
+            </td>
+        </tr>
+    </table>
 
-<table class="totals">
-    <tr><td>Subtotal</td><td th:text="${quotation.subtotal}"></td></tr>
-    <tr th:if="${quotation.discountAmount != null and quotation.discountAmount > 0}">
-        <td>Discount</td><td th:text="${quotation.discountAmount}"></td>
-    </tr>
-    <tr th:if="${quotation.cgstAmount != null and quotation.cgstAmount > 0}">
-        <td>CGST</td><td th:text="${quotation.cgstAmount}"></td>
-    </tr>
-    <tr th:if="${quotation.sgstAmount != null and quotation.sgstAmount > 0}">
-        <td>SGST</td><td th:text="${quotation.sgstAmount}"></td>
-    </tr>
-    <tr th:if="${quotation.igstAmount != null and quotation.igstAmount > 0}">
-        <td>IGST</td><td th:text="${quotation.igstAmount}"></td>
-    </tr>
-    <tr><td><strong>Grand Total</strong></td><td><strong th:text="${quotation.grandTotal}"></strong></td></tr>
-</table>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th class="center" style="width: 5%;">#</th>
+                <th style="width: 37%;">Scope / Item Description</th>
+                <th class="center" style="width: 12%;">HSN/SAC</th>
+                <th class="num" style="width: 8%;">Qty</th>
+                <th class="center" style="width: 8%;">Unit</th>
+                <th class="num" style="width: 14%;">Rate (₹)</th>
+                <th class="num" style="width: 16%;">Amount (₹)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="item, stat : ${items}">
+                <td class="center" th:text="${stat.count}">1</td>
+                <td>
+                    <strong th:text="${item.itemDescription}">Fabrication Job Description</strong>
+                </td>
+                <td class="center" th:text="${item.hsnSacCode != null ? item.hsnSacCode : '7308'}">7308</td>
+                <td class="num" th:text="${item.quantity}">10</td>
+                <td class="center" th:text="${item.unit != null ? item.unit : 'NOS'}">NOS</td>
+                <td class="num" th:text="${#numbers.formatDecimal(item.rate, 1, 2)}">1,500.00</td>
+                <td class="num" th:text="${#numbers.formatDecimal(item.amount, 1, 2)}">15,000.00</td>
+            </tr>
+        </tbody>
+    </table>
 
-<div th:if="${bankDetails != null}" style="margin-top: 24px;">
-    <strong>Bank Details</strong>
-    <div th:text="${bankDetails.accountHolderName}"></div>
-    <div th:text="${bankDetails.bankName} + ' - ' + ${bankDetails.branchName}"></div>
-    <div>A/C: <span th:text="${bankDetails.accountNumber}"></span></div>
-    <div>IFSC: <span th:text="${bankDetails.ifscCode}"></span></div>
-</div>
+    <table class="bottom-section">
+        <tr>
+            <td class="notes-col">
+                <div class="bank-box" th:if="${bankDetails != null}">
+                    <div class="box-title">Bank Details for Payment</div>
+                    <div><strong>A/C Holder:</strong> <span th:text="${bankDetails.accountHolderName}">MSME Enterprises</span></div>
+                    <div><strong>Bank &amp; Branch:</strong> <span th:text="${bankDetails.bankName}">State Bank of India</span> - <span th:text="${bankDetails.branchName}">Industrial Branch</span></div>
+                    <div><strong>A/C No:</strong> <span th:text="${bankDetails.accountNumber}">123456789012</span></div>
+                    <div><strong>IFSC Code:</strong> <span th:text="${bankDetails.ifscCode}">SBIN0001234</span></div>
+                </div>
 
-<div th:utext="${footerHtml}"></div>
+                <div class="terms-box">
+                    <div class="box-title">Terms &amp; Fabrication Conditions</div>
+                    <div>1. Validity: This quotation is valid for 15 days from date of issue.</div>
+                    <div>2. Payment: 50% advance along with purchase order; balance prior to dispatch.</div>
+                    <div>3. Raw Material: Grade and tolerances as per standard fabrication drawing / spec.</div>
+                    <div>4. Delivery: Within 2 to 3 weeks from receipt of PO and confirmed drawing.</div>
+                    <div>5. Taxes: GST as charged above. Freight extra at actuals.</div>
+                </div>
+            </td>
+            <td class="totals-col">
+                <table class="totals-table">
+                    <tr>
+                        <td>Subtotal</td>
+                        <td class="val">₹ <span th:text="${#numbers.formatDecimal(quotation.subtotal, 1, 2)}">0.00</span></td>
+                    </tr>
+                    <tr th:if="${quotation.discountAmount != null and quotation.discountAmount > 0}">
+                        <td>Discount</td>
+                        <td class="val">- ₹ <span th:text="${#numbers.formatDecimal(quotation.discountAmount, 1, 2)}">0.00</span></td>
+                    </tr>
+                    <tr th:if="${quotation.cgstAmount != null and quotation.cgstAmount > 0}">
+                        <td>CGST <span th:if="${quotation.cgstPercentage != null}">(<span th:text="${quotation.cgstPercentage}">9</span>%)</span></td>
+                        <td class="val">₹ <span th:text="${#numbers.formatDecimal(quotation.cgstAmount, 1, 2)}">0.00</span></td>
+                    </tr>
+                    <tr th:if="${quotation.sgstAmount != null and quotation.sgstAmount > 0}">
+                        <td>SGST <span th:if="${quotation.sgstPercentage != null}">(<span th:text="${quotation.sgstPercentage}">9</span>%)</span></td>
+                        <td class="val">₹ <span th:text="${#numbers.formatDecimal(quotation.sgstAmount, 1, 2)}">0.00</span></td>
+                    </tr>
+                    <tr th:if="${quotation.igstAmount != null and quotation.igstAmount > 0}">
+                        <td>IGST <span th:if="${quotation.igstPercentage != null}">(<span th:text="${quotation.igstPercentage}">18</span>%)</span></td>
+                        <td class="val">₹ <span th:text="${#numbers.formatDecimal(quotation.igstAmount, 1, 2)}">0.00</span></td>
+                    </tr>
+                    <tr class="grand-total-row">
+                        <td>Grand Total</td>
+                        <td class="val">₹ <span th:text="${#numbers.formatDecimal(quotation.grandTotal, 1, 2)}">0.00</span></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <table class="sig-table">
+        <tr>
+            <td style="width: 50%;">
+                <div>Customer Acceptance:</div>
+                <br /><br />
+                <div>Signature &amp; Company Seal</div>
+            </td>
+            <td style="width: 50%; text-align: right;">
+                <div>For <strong th:text="${business != null and business.businessName != null ? business.businessName : 'Authorized Signatory'}">Authorized Signatory</strong></div>
+                <br /><br />
+                <div>Authorized Signatory</div>
+            </td>
+        </tr>
+    </table>
+
 </body>
 </html>

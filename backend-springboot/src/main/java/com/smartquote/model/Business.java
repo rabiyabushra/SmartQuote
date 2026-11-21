@@ -50,6 +50,9 @@ public class Business {
     public String getGstType() { return gstType; }
     public void setGstType(String gstType) { this.gstType = gstType; }
 
+    public String getBankDetails() { return bankDetails; }
+    public void setBankDetails(String bankDetails) { this.bankDetails = bankDetails; }
+
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
 

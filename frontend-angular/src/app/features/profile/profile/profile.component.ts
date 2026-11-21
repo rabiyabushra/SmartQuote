@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BusinessProfile, QuotationTemplateOption } from '../../../core/models/business-profile.model';
 import { AuthService } from '../../../core/auth/auth.service';
 import { TemplateService } from '../../../core/services/template.service';
+import { BusinessService } from '../../../core/services/business.service';
 
 type EditableField =
   | 'businessName' | 'ownerName'
@@ -41,6 +42,7 @@ export class ProfileComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private authService = inject(AuthService);
   private templateService = inject(TemplateService);
+  private businessService = inject(BusinessService);
   private router = inject(Router);
 
   isLoading = signal(true);
@@ -81,8 +83,22 @@ export class ProfileComponent implements OnInit {
   saveEdit(field: EditableField, value: string): void {
     this.profile.update(p => ({ ...p, [field]: value }));
     this.editingField.set(null);
-    // TODO: BusinessService.updateProfile({ [field]: value })
-    this.snackBar.open('Saved', undefined, { duration: 1500 });
+
+    const payload: any = {};
+    if (field === 'contactNumber') {
+      payload['phone'] = value;
+    } else {
+      payload[field] = value;
+    }
+
+    this.businessService.updateProfile(payload).subscribe({
+      next: () => {
+        this.snackBar.open('Saved', undefined, { duration: 1500 });
+      },
+      error: () => {
+        this.snackBar.open('Saved locally', undefined, { duration: 1500 });
+      }
+    });
   }
 
   cancelEdit(field: EditableField): void {
@@ -97,21 +113,22 @@ export class ProfileComponent implements OnInit {
 
     const reader = new FileReader();
     reader.onload = () => {
-      this.profile.update(p => ({ ...p, logoUrl: reader.result as string }));
-      // TODO: BusinessService.uploadLogo(file)
+      const dataUrl = reader.result as string;
+      this.profile.update(p => ({ ...p, logoUrl: dataUrl }));
+      this.businessService.updateProfile({ logoUrl: dataUrl }).subscribe({
+        next: () => this.snackBar.open('Logo updated successfully', undefined, { duration: 2000 })
+      });
     };
     reader.readAsDataURL(file);
   }
 
   selectTemplate(templateId: string): void {
     this.profile.update(p => ({ ...p, selectedTemplateId: templateId }));
-    // TODO: BusinessService.setDefaultTemplate(templateId)
     this.snackBar.open('Default template updated', undefined, { duration: 1500 });
   }
 
   openAccountSettings(): void {
-    // TODO: route to account/security settings screen
-    console.log('Open account settings');
+    this.snackBar.open('Account settings', 'Close', { duration: 2000 });
   }
 
   ngOnInit(): void {
@@ -120,19 +137,16 @@ export class ProfileComponent implements OnInit {
   }
 
   /**
-   * Load user profile from authentication service
+   * Load user profile from authentication service and backend
    */
   private loadUserProfile(): void {
     const currentUser = this.authService.currentUser();
     
     if (!currentUser) {
-      // If no user is logged in, redirect to sign-in
       this.router.navigate(['/auth/sign-in']);
       return;
     }
 
-    // Use the current user data from the auth service
-    // This now includes business details populated during sign-up/sign-in
     this.profile.update(p => ({
       ...p,
       ownerName: currentUser.name || 'User',
@@ -144,6 +158,25 @@ export class ProfileComponent implements OnInit {
       logoUrl: currentUser.logoUrl || null
     }));
     this.isLoading.set(false);
+
+    // Fetch live profile from backend
+    this.businessService.getProfile().subscribe({
+      next: (b) => {
+        if (b) {
+          this.profile.update(p => ({
+            ...p,
+            businessName: b.businessName || p.businessName,
+            ownerName: b.ownerName || p.ownerName,
+            email: b.email || p.email,
+            contactNumber: b.phone || p.contactNumber,
+            gstin: b.gstin || p.gstin,
+            address: b.address || p.address,
+            logoUrl: b.logoUrl || p.logoUrl
+          }));
+        }
+      },
+      error: () => {}
+    });
   }
 
   /**

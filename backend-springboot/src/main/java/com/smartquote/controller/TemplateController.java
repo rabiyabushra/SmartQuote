@@ -24,15 +24,16 @@ public class TemplateController {
     @GetMapping
     public List<QuotationTemplate> list(@RequestHeader HttpHeaders headers) {
         User user = requireUser(headers);
-        return templateRepository.findByBusinessId(user.getBusinessId());
+        return templateRepository.findByBusinessIdOrBusinessIdIsNull(user.getBusinessId());
     }
 
     @GetMapping("/{id}")
     public QuotationTemplate get(@PathVariable String id, @RequestHeader HttpHeaders headers) {
         User user = requireUser(headers);
         QuotationTemplate template = templateRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Template not found: " + id));
-        if (!user.getBusinessId().equals(template.getBusinessId())) {
+                .orElseGet(() -> templateRepository.findByTemplateType(id.toUpperCase().replace('-', '_'))
+                        .orElseThrow(() -> new IllegalArgumentException("Template not found: " + id)));
+        if (template.getBusinessId() != null && !user.getBusinessId().equals(template.getBusinessId())) {
             throw new IllegalArgumentException("Access denied for this template.");
         }
         return template;

@@ -4,7 +4,7 @@ export interface QuotationItemDto {
   lineNumber: number;
   itemId?: string;
   itemDescription: string;
-  hsnSacCode: string;
+  hsnSacCode?: string;
   quantity: number;
   unit: string;
   rate: number;
@@ -12,11 +12,13 @@ export interface QuotationItemDto {
 }
 
 export interface QuotationRequest {
-  businessId: string;
-  contactId: string;
+  businessId?: string;
+  contactId?: string;
+  customerName?: string;
+  customerPhone?: string;
   templateId?: string;
   bankId?: string;
-  quotationDate: string; // ISO date string
+  quotationDate?: string; // ISO date string
   dueDate?: string; // ISO date string
   priority?: string;
   billingAddress?: string;

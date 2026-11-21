@@ -31,7 +31,7 @@ public class OtpService {
     private final ConcurrentHashMap<String, OtpEntry> store = new ConcurrentHashMap<>();
     private final JavaMailSender mailSender;
 
-    @Value("${spring.mail.username}")
+    @Value("${spring.mail.username:noreply@smartquote.com}")
     private String fromEmail;
 
     public OtpService(JavaMailSender mailSender) {

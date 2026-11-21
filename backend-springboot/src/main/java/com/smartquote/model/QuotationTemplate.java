@@ -20,6 +20,7 @@ public class QuotationTemplate {
     public QuotationTemplate() {}
 
     public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getBusinessId() { return businessId; }
     public void setBusinessId(String businessId) { this.businessId = businessId; }
