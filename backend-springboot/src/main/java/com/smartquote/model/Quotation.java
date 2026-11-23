@@ -17,6 +17,8 @@ public class Quotation {
     private String quotationNumber;      // auto-generated e.g. QT-2024-0001
     private String businessId;           // FK -> Business.id
     private String contactId;            // FK -> Contact.id
+    private String customerName;         // Cached customer / company name
+    private String customerPhone;        // Cached customer phone number
     private String templateId;           // FK -> QuotationTemplate.id
     private String bankId;               // FK -> BankDetails.id
     private LocalDate quotationDate;
@@ -136,6 +138,12 @@ public class Quotation {
 
     public String getContactId() { return contactId; }
     public void setContactId(String contactId) { this.contactId = contactId; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getCustomerPhone() { return customerPhone; }
+    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
 
     public String getTemplateId() { return templateId; }
     public void setTemplateId(String templateId) { this.templateId = templateId; }

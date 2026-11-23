@@ -95,6 +95,16 @@ public class QuotationController {
             contact.setCreatedOn(java.time.Instant.now());
             contact = contactRepository.save(contact);
             request.setContactId(contact.getId());
+            if (request.getCustomerName() == null || request.getCustomerName().isBlank()) {
+                request.setCustomerName(cName);
+            }
+        } else if (request.getCustomerName() == null || request.getCustomerName().isBlank()) {
+            contactRepository.findById(request.getContactId()).ifPresent(c -> {
+                request.setCustomerName(c.getCompanyName() != null && !c.getCompanyName().isBlank() ? c.getCompanyName() : c.getContactPerson());
+                if (request.getCustomerPhone() == null || request.getCustomerPhone().isBlank()) {
+                    request.setCustomerPhone(c.getPhone());
+                }
+            });
         }
 
         Quotation created = quotationService.createQuotation(request.toEntity());
@@ -123,10 +133,17 @@ public class QuotationController {
         Quotation existing = quotationService.getQuotation(id);
         assertBusinessAccess(user, existing.getBusinessId());
 
-        String status = body.get("status");
-        if (status == null || status.isBlank()) {
+        String rawStatus = body.get("status");
+        if (rawStatus == null || rawStatus.isBlank()) {
             throw new IllegalArgumentException("status is required.");
         }
+        String status = rawStatus.trim().toLowerCase();
+        if (status.contains("sent")) status = "sent";
+        else if (status.contains("accept")) status = "accepted";
+        else if (status.contains("reject") || status.contains("not convert")) status = "rejected";
+        else if (status.contains("draft")) status = "draft";
+        else if (status.contains("expire")) status = "expired";
+
         return QuotationResponseDto.from(quotationService.updateStatus(id, status));
     }
 

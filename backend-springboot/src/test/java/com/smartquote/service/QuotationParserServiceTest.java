@@ -161,4 +161,44 @@ class QuotationParserServiceTest {
         assertEquals(BigDecimal.valueOf(31284).setScale(2), result.getTaxAmount());
         assertEquals(BigDecimal.valueOf(205084).setScale(2), result.getGrandTotal());
     }
+
+    @Test
+    @DisplayName("Voice Item, Unit, Price, GST mapping: 10 pieces steel rod rate 200 gst 18%")
+    void testItemUnitRateGstMapping() {
+        String transcript = "10 pieces steel rod rate 200 gst 18%";
+        ParsedQuotationResponseDto result = quotationParserService.parseQuotationTranscript(transcript);
+
+        assertNotNull(result);
+        assertEquals(BigDecimal.valueOf(18), result.getTaxPercentage());
+        assertEquals(1, result.getItems().size());
+
+        var item = result.getItems().get(0);
+        assertTrue(item.getItemDescription().equalsIgnoreCase("Steel rod"), "Description should be 'Steel rod', was: " + item.getItemDescription());
+        assertEquals(BigDecimal.valueOf(10), item.getQuantity());
+        assertEquals("pcs", item.getUnit());
+        assertEquals(BigDecimal.valueOf(200), item.getRate());
+        assertEquals(BigDecimal.valueOf(2000).setScale(2), item.getLineTotal());
+    }
+
+    @Test
+    @DisplayName("Voice Multiple Items with kg, box units and GST: 50 kg aluminium rod rate 350 and 20 boxes welding electrodes rate 1200 each gst 18 percent")
+    void testMultipleItemsWithUnitsAndGst() {
+        String transcript = "Create quotation for Sharma Traders. 50 kg aluminium rod rate 350 per kg, and 20 boxes welding electrodes rate 1200 each. GST 18 percent";
+        ParsedQuotationResponseDto result = quotationParserService.parseQuotationTranscript(transcript);
+
+        assertNotNull(result);
+        assertEquals("Sharma Traders", result.getCustomerName());
+        assertEquals(BigDecimal.valueOf(18), result.getTaxPercentage());
+        assertEquals(2, result.getItems().size());
+
+        var item1 = result.getItems().get(0);
+        assertEquals(BigDecimal.valueOf(50), item1.getQuantity());
+        assertEquals("kg", item1.getUnit());
+        assertEquals(BigDecimal.valueOf(350), item1.getRate());
+
+        var item2 = result.getItems().get(1);
+        assertEquals(BigDecimal.valueOf(20), item2.getQuantity());
+        assertEquals("box", item2.getUnit());
+        assertEquals(BigDecimal.valueOf(1200), item2.getRate());
+    }
 }

@@ -263,7 +263,7 @@ export class QuotationFormComponent implements OnInit {
           if (previewImmediately) {
             this.router.navigate(['/quotations', res.id, 'preview']);
           } else {
-            this.router.navigate(['/quotations']);
+            this.router.navigate(['/dashboard']);
           }
         },
         error: (err) => {
@@ -281,7 +281,7 @@ export class QuotationFormComponent implements OnInit {
           if (previewImmediately) {
             this.router.navigate(['/quotations', res.id, 'preview']);
           } else {
-            this.router.navigate(['/quotations']);
+            this.router.navigate(['/dashboard']);
           }
         },
         error: (err) => {

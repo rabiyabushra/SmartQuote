@@ -24,7 +24,7 @@
     </mat-form-field>
   </div>
 
-  <div class="item-row__field-group">
+  <div class="item-row__field-group item-row__field-group--qty">
     <mat-form-field appearance="outline" class="item-row__field">
       <mat-label>Qty</mat-label>
       <input
@@ -49,7 +49,21 @@
     </mat-form-field>
   </div>
 
-  <div class="item-row__field-group">
+  <div class="item-row__field-group item-row__field-group--unit">
+    <mat-form-field appearance="outline" class="item-row__field">
+      <mat-label>Unit</mat-label>
+      <input
+        matInput
+        name="unit-{{ lineNumber }}"
+        [(ngModel)]="unit"
+        [disabled]="disabled"
+        (ngModelChange)="emitChange()"
+        placeholder="e.g. pcs, kg, box"
+      />
+    </mat-form-field>
+  </div>
+
+  <div class="item-row__field-group item-row__field-group--rate">
     <mat-form-field appearance="outline" class="item-row__field">
       <mat-label>Rate (₹)</mat-label>
       <input

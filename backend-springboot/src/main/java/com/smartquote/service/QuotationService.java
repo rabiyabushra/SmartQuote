@@ -103,9 +103,9 @@ public class QuotationService {
                 .orElseThrow(() -> new IllegalArgumentException("Quotation not found: " + quotationId));
     }
 
-    /** List of a business's non-deleted quotations — used by the quotation-list screen. */
+    /** List of a business's non-deleted quotations — ordered newest first for immediate dashboard display. */
     public List<Quotation> listQuotations(String businessId) {
-        return quotationRepository.findByBusinessIdAndIsDeletedFalse(businessId);
+        return quotationRepository.findByBusinessIdAndIsDeletedFalseOrderByCreatedOnDesc(businessId);
     }
 
     /** Draft -> Sent -> Accepted/Rejected/Expired. Called after PDF send / WhatsApp share / manual update. */

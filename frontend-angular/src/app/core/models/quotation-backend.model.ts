@@ -32,6 +32,8 @@ export interface QuotationResponse {
   quotationNumber: string;
   businessId: string;
   contactId: string;
+  customerName?: string;
+  customerPhone?: string;
   templateId?: string;
   bankId?: string;
   quotationDate: string;

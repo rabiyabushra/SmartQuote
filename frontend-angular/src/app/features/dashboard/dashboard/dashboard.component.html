@@ -195,11 +195,11 @@
               <mat-icon>edit</mat-icon>
               <span>Edit</span>
             </button>
-            <button mat-menu-item>
+            <button mat-menu-item (click)="onShareQuotation(q)">
               <mat-icon>share</mat-icon>
-              <span>Share</span>
+              <span>Share via WhatsApp</span>
             </button>
-            <button mat-menu-item class="delete-item">
+            <button mat-menu-item class="delete-item" (click)="onDeleteQuotation(q.id)">
               <mat-icon>delete_outline</mat-icon>
               <span>Delete</span>
             </button>
@@ -239,12 +239,10 @@
           Status <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
         </button>
         <mat-menu #statusMenu="matMenu">
-          <button mat-menu-item>Draft</button>
-          <button mat-menu-item>Sent to Customer</button>
-          <button mat-menu-item>Accepted</button>
-          <button mat-menu-item>In Negotiation</button>
-          <button mat-menu-item>Not Converted</button>
-          <button mat-menu-item>Converted</button>
+          <button mat-menu-item (click)="onUpdateStatus(q.id, 'draft')">Draft</button>
+          <button mat-menu-item (click)="onUpdateStatus(q.id, 'sent')">Sent to Customer</button>
+          <button mat-menu-item (click)="onUpdateStatus(q.id, 'accepted')">Accepted</button>
+          <button mat-menu-item (click)="onUpdateStatus(q.id, 'rejected')">Not Converted</button>
         </mat-menu>
 
         <span class="action-icons">
@@ -262,11 +260,45 @@
     </div>
   </section>
 
-  <!-- Table view placeholder -->
-  <section class="quotation-table" *ngIf="!isLoading() && view() === 'table' && quotations().length > 0">
-    <div class="table-placeholder-card">
-      <mat-icon>table_chart</mat-icon>
-      <p>Table view active. Switch to Card view using toolbar.</p>
+  <!-- Table view -->
+  <section class="quotation-table-section" *ngIf="!isLoading() && view() === 'table' && quotations().length > 0">
+    <div class="table-responsive">
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Quote Ref</th>
+            <th>Customer Name</th>
+            <th>Contact</th>
+            <th>City / State</th>
+            <th>Created</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let q of quotations()">
+            <td class="quote-id-cell">{{ q.quoteId }}</td>
+            <td class="customer-name-cell">{{ q.customerName }}</td>
+            <td>{{ q.contactNumber }}</td>
+            <td>{{ q.city }}, {{ q.state }}</td>
+            <td>{{ q.dateCreated | date: 'MMM d, y' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="statusColor(q.status)">{{ q.status }}</span>
+            </td>
+            <td class="table-actions">
+              <button mat-icon-button matTooltip="View details" (click)="onViewQuotation(q.id)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Download PDF" (click)="onDownloadQuotation(q.id)">
+                <mat-icon>file_download</mat-icon>
+              </button>
+              <button mat-icon-button matTooltip="Share" (click)="onShareQuotation(q)">
+                <mat-icon>share</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 

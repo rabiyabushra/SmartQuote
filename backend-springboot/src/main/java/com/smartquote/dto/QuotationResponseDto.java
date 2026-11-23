@@ -13,6 +13,8 @@ public class QuotationResponseDto {
     private String quotationNumber;
     private String businessId;
     private String contactId;
+    private String customerName;
+    private String customerPhone;
     private String templateId;
     private String bankId;
     private LocalDate quotationDate;
@@ -44,6 +46,8 @@ public class QuotationResponseDto {
         dto.quotationNumber = quotation.getQuotationNumber();
         dto.businessId = quotation.getBusinessId();
         dto.contactId = quotation.getContactId();
+        dto.customerName = quotation.getCustomerName();
+        dto.customerPhone = quotation.getCustomerPhone();
         dto.templateId = quotation.getTemplateId();
         dto.bankId = quotation.getBankId();
         dto.quotationDate = quotation.getQuotationDate();
@@ -77,6 +81,8 @@ public class QuotationResponseDto {
     public String getQuotationNumber() { return quotationNumber; }
     public String getBusinessId() { return businessId; }
     public String getContactId() { return contactId; }
+    public String getCustomerName() { return customerName; }
+    public String getCustomerPhone() { return customerPhone; }
     public String getTemplateId() { return templateId; }
     public String getBankId() { return bankId; }
     public LocalDate getQuotationDate() { return quotationDate; }

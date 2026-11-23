@@ -28,6 +28,8 @@ public class QuotationRequestDto {
         Quotation quotation = new Quotation();
         quotation.setBusinessId(businessId);
         quotation.setContactId(contactId);
+        quotation.setCustomerName(customerName);
+        quotation.setCustomerPhone(customerPhone);
         quotation.setTemplateId(templateId);
         quotation.setBankId(bankId);
         quotation.setQuotationDate(quotationDate);
@@ -44,6 +46,8 @@ public class QuotationRequestDto {
 
     public void applyTo(Quotation quotation) {
         if (contactId != null) quotation.setContactId(contactId);
+        if (customerName != null) quotation.setCustomerName(customerName);
+        if (customerPhone != null) quotation.setCustomerPhone(customerPhone);
         if (templateId != null) quotation.setTemplateId(templateId);
         if (bankId != null) quotation.setBankId(bankId);
         if (dueDate != null) quotation.setDueDate(dueDate);

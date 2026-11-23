@@ -35,9 +35,19 @@ const WORD_VALUES: Record<string, number> = {
   hundred: 100,
   thousand: 1000,
   lakh: 100000,
+  lacs: 100000,
+  lac: 100000,
   crores: 10000000,
   crore: 10000000
 };
+
+const IGNORED_FILLER_WORDS = new Set([
+  'pieces', 'piece', 'pcs', 'pc', 'boxes', 'box', 'units', 'unit', 'nos', 'number', 'numbers',
+  'kg', 'kgs', 'kilo', 'kilos', 'meter', 'meters', 'mtr', 'mtrs', 'feet', 'ft', 'sets', 'set',
+  'packets', 'packet', 'pkt', 'rolls', 'roll', 'tons', 'ton', 'liters', 'liter', 'ltr',
+  'rupees', 'rs', 'inr', 'each', 'per', 'at', 'rate', 'price', 'quantity', 'qty', 'count',
+  'of', 'and', 'the', 'a', 'an', 'is', 'for'
+]);
 
 const UNCERTAIN_NUMBER_MESSAGE =
   'Could not confidently recognize a numeric value. Please edit the value manually.';
@@ -74,10 +84,16 @@ function parseWordNumber(text: string): number | null {
 
   let total = 0;
   let current = 0;
+  let hasValidNumber = false;
 
   for (const token of tokens) {
     if (/^\d+$/.test(token)) {
       current += Number(token);
+      hasValidNumber = true;
+      continue;
+    }
+
+    if (IGNORED_FILLER_WORDS.has(token)) {
       continue;
     }
 
@@ -86,6 +102,7 @@ function parseWordNumber(text: string): number | null {
       return null;
     }
 
+    hasValidNumber = true;
     if (mapped === 100 || mapped === 1000 || mapped === 100000 || mapped === 10000000) {
       current = current === 0 ? mapped : current * mapped;
       total += current;
@@ -96,7 +113,7 @@ function parseWordNumber(text: string): number | null {
   }
 
   total += current;
-  return total > 0 ? total : null;
+  return hasValidNumber ? total : null;
 }
 
 export function normalizeSpokenNumber(text: string): NumberNormalizationResult {

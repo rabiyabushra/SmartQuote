@@ -88,8 +88,8 @@ export class QuotationListComponent implements OnInit {
               const contact = contactMap.get(q.contactId);
               return {
                 ...q,
-                customerName: contact?.companyName || contact?.contactPerson || 'Unknown',
-                customerPhone: contact?.phone || '—'
+                customerName: q.customerName || contact?.companyName || contact?.contactPerson || 'Valued Customer',
+                customerPhone: q.customerPhone || contact?.phone || '—'
               };
             });
 
@@ -101,8 +101,8 @@ export class QuotationListComponent implements OnInit {
             // Even if contacts fail, show quotations
             const enrichedQuotations: QuotationListItem[] = quotations.map(q => ({
               ...q,
-              customerName: 'Unknown',
-              customerPhone: '—'
+              customerName: q.customerName || 'Valued Customer',
+              customerPhone: q.customerPhone || '—'
             }));
             this.quotations.set(enrichedQuotations);
             this.filteredQuotations.set(enrichedQuotations);

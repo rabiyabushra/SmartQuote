@@ -77,9 +77,9 @@ export class DashboardComponent implements OnInit {
   view = signal<'card' | 'table'>('card');
   pageIndex = signal(0);
   pageSize = 6;
-  totalCount = signal(0);
   showFilterDrawer = signal(false);
   searchControl = this.fb.control('');
+  searchTerm = signal('');
   dateRange = this.fb.group({
     start: [null],
     end: [null]
@@ -99,44 +99,71 @@ export class DashboardComponent implements OnInit {
   // All quotations from backend
   private allQuotations = signal<QuotationSummary[]>([]);
   
+  // Filtered quotations based on search input and active filters
+  filteredQuotations = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    let list = this.allQuotations();
+    if (term) {
+      list = list.filter(q =>
+        q.customerName.toLowerCase().includes(term) ||
+        q.quoteId.toLowerCase().includes(term) ||
+        q.status.toLowerCase().includes(term) ||
+        (q.city && q.city.toLowerCase().includes(term)) ||
+        (q.state && q.state.toLowerCase().includes(term))
+      );
+    }
+    return list;
+  });
+
+  totalCount = computed(() => this.filteredQuotations().length);
+
   // Paginated quotations for display
   quotations = computed(() => {
     const start = this.pageIndex() * this.pageSize;
     const end = start + this.pageSize;
-    return this.allQuotations().slice(start, end);
+    return this.filteredQuotations().slice(start, end);
   });
 
   rangeStart = computed(() => this.totalCount() === 0 ? 0 : this.pageIndex() * this.pageSize + 1);
   rangeEnd = computed(() => Math.min((this.pageIndex() + 1) * this.pageSize, this.totalCount()));
 
   ngOnInit(): void {
+    this.searchControl.valueChanges.subscribe(val => {
+      this.searchTerm.set(val || '');
+      this.pageIndex.set(0);
+    });
     this.loadQuotations();
   }
 
   /**
    * Load quotations from backend for the current signed-in user
    */
-  private loadQuotations(): void {
+  loadQuotations(): void {
     this.isLoading.set(true);
 
     // Load quotations from backend
     this.quotationService.list().subscribe({
       next: (backendQuotations) => {
+        // Sort newest first so freshly created quotations immediately show at top
+        const sortedQuotations = [...backendQuotations].sort((a, b) => {
+          const dateA = a.createdOn ? new Date(a.createdOn).getTime() : 0;
+          const dateB = b.createdOn ? new Date(b.createdOn).getTime() : 0;
+          return dateB - dateA;
+        });
+
         // Load contacts to get customer information
         this.contactService.list().subscribe({
           next: (contacts) => {
-            // Create a contact map for quick lookup
             const contactMap = new Map(contacts.map(c => [c.id!, c]));
 
-            // Map backend quotations to UI model
-            const quotationSummaries: QuotationSummary[] = backendQuotations.map(q => {
+            const quotationSummaries: QuotationSummary[] = sortedQuotations.map(q => {
               const contact = contactMap.get(q.contactId);
               
               return {
                 id: q.id,
                 quoteId: q.quotationNumber,
-                customerName: contact?.contactPerson || contact?.companyName || 'Unknown Customer',
-                contactNumber: contact?.phone || '—',
+                customerName: q.customerName || contact?.companyName || contact?.contactPerson || 'Valued Customer',
+                contactNumber: q.customerPhone || contact?.phone || '—',
                 email: contact?.email || '—',
                 status: this.mapBackendStatus(q.status),
                 employeeName: this.authService.currentUser()?.name || 'You',
@@ -149,18 +176,16 @@ export class DashboardComponent implements OnInit {
             });
 
             this.allQuotations.set(quotationSummaries);
-            this.totalCount.set(quotationSummaries.length);
             this.calculateStats(quotationSummaries);
             this.isLoading.set(false);
           },
           error: (error) => {
             console.error('Error loading contacts:', error);
-            // Even if contacts fail, show quotations without customer details
-            const quotationSummaries: QuotationSummary[] = backendQuotations.map(q => ({
+            const quotationSummaries: QuotationSummary[] = sortedQuotations.map(q => ({
               id: q.id,
               quoteId: q.quotationNumber,
-              customerName: 'Unknown Customer',
-              contactNumber: '—',
+              customerName: q.customerName || 'Valued Customer',
+              contactNumber: q.customerPhone || '—',
               email: '—',
               status: this.mapBackendStatus(q.status),
               employeeName: this.authService.currentUser()?.name || 'You',
@@ -172,7 +197,6 @@ export class DashboardComponent implements OnInit {
             }));
 
             this.allQuotations.set(quotationSummaries);
-            this.totalCount.set(quotationSummaries.length);
             this.calculateStats(quotationSummaries);
             this.isLoading.set(false);
           }
@@ -322,6 +346,43 @@ applyFilters(filters: any): void {
         this.snackBar.open(message, 'Close', { duration: 5000 });
       }
     });
+  }
+
+  onUpdateStatus(id: string, newStatus: string): void {
+    this.quotationService.updateStatus(id, newStatus as QuotationStatus).subscribe({
+      next: () => {
+        this.snackBar.open(`Status updated to ${newStatus}`, 'Close', { duration: 3000 });
+        this.loadQuotations();
+      },
+      error: (err) => {
+        const msg = err.error?.message || 'Failed to update status.';
+        this.snackBar.open(msg, 'Close', { duration: 4000 });
+      }
+    });
+  }
+
+  onDeleteQuotation(id: string): void {
+    if (confirm('Are you sure you want to delete this quotation?')) {
+      this.quotationService.delete(id).subscribe({
+        next: () => {
+          this.snackBar.open('Quotation deleted successfully.', 'Close', { duration: 3000 });
+          this.loadQuotations();
+        },
+        error: (err) => {
+          const msg = err.error?.message || 'Failed to delete quotation.';
+          this.snackBar.open(msg, 'Close', { duration: 4000 });
+        }
+      });
+    }
+  }
+
+  onShareQuotation(q: QuotationSummary): void {
+    const text = encodeURIComponent(`Quotation ${q.quoteId} for ${q.customerName} is ready. View details at: ${window.location.origin}/quotations/${q.id}/preview`);
+    const phone = q.contactNumber ? q.contactNumber.replace(/[^0-9]/g, '') : '';
+    const whatsappUrl = phone.length >= 10
+      ? `https://wa.me/${phone}?text=${text}`
+      : `https://api.whatsapp.com/send?text=${text}`;
+    window.open(whatsappUrl, '_blank');
   }
 
   /**

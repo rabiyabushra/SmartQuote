@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,7 +29,7 @@ export interface QuotationItemRowValue {
   templateUrl: './quotation-item-row.component.html',
   styleUrl: './quotation-item-row.component.scss'
 })
-export class QuotationItemRowComponent {
+export class QuotationItemRowComponent implements OnChanges {
   @Input({ required: true }) quotationId!: string;
   @Input({ required: true }) lineNumber!: number;
   @Input() itemDescription = '';
@@ -45,6 +45,21 @@ export class QuotationItemRowComponent {
   descriptionError = '';
   quantityError = '';
   rateError = '';
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['itemDescription']) {
+      this.itemDescription = changes['itemDescription'].currentValue ?? '';
+    }
+    if (changes['quantity']) {
+      this.quantity = changes['quantity'].currentValue;
+    }
+    if (changes['rate']) {
+      this.rate = changes['rate'].currentValue;
+    }
+    if (changes['unit']) {
+      this.unit = changes['unit'].currentValue ?? 'pcs';
+    }
+  }
 
   emitChange(): void {
     this.itemChange.emit({
