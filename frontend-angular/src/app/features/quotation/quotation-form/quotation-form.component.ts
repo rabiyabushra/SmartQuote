@@ -19,6 +19,7 @@ import { ParsedQuotationResponse } from '../../../core/models/parsed-quotation.m
 import { QuotationService } from '../../../core/services/quotation.service';
 import { CustomerService, Customer } from '../../../core/services/customer.service';
 import { TemplateService, QuotationTemplate } from '../../../core/services/template.service';
+import { BusinessService } from '../../../core/services/business.service';
 import { QuotationRequest, QuotationItemDto } from '../../../core/models/quotation-backend.model';
 
 export interface ItemRowModel {
@@ -57,6 +58,7 @@ export class QuotationFormComponent implements OnInit {
   private quotationService = inject(QuotationService);
   private customerService = inject(CustomerService);
   private templateService = inject(TemplateService);
+  private businessService = inject(BusinessService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
@@ -65,14 +67,25 @@ export class QuotationFormComponent implements OnInit {
 
   quotationId = signal<string>('QT-' + Math.floor(100000 + Math.random() * 900000));
   selectedContactId = signal<string>('');
-  customerName = signal<string>('Ravi Traders');
-  customerPhone = signal<string>('+91 98765 43210');
+  customerName = signal<string>('');
+  customerPhone = signal<string>('');
   customerState = signal<string>('');
   selectedTemplateId = signal<string>('fabrication');
   quotationDate = signal<string>(new Date().toISOString().substring(0, 10));
   dueDate = signal<string>('');
   gstRate = signal<number>(18);
   discountPercentage = signal<number>(0);
+  termsAndConditions = signal<string>('');
+  footerNotes = signal<string>('');
+
+  // Business profile details (dynamic from profile)
+  businessName = signal<string>('');
+  businessOwner = signal<string>('');
+  businessEmail = signal<string>('');
+  businessPhone = signal<string>('');
+  businessGstin = signal<string>('');
+  businessAddress = signal<string>('');
+
   isReviewMode = signal<boolean>(false);
   isSaving = signal<boolean>(false);
   parseErrorMessage = signal<string>('');
@@ -111,12 +124,43 @@ export class QuotationFormComponent implements OnInit {
       this.selectedTemplateId.set(this.templateId);
     }
 
+    this.loadBusinessProfile();
     this.loadCustomers();
     this.loadTemplates();
 
     if (this.id) {
       this.loadExistingQuotation(this.id);
     }
+  }
+
+  loadBusinessProfile(): void {
+    this.businessService.getProfile().subscribe({
+      next: (profile) => {
+        if (profile) {
+          this.businessName.set(profile.businessName || '');
+          this.businessOwner.set(profile.ownerName || '');
+          this.businessEmail.set(profile.email || '');
+          this.businessPhone.set(profile.phone || '');
+          this.businessGstin.set(profile.gstin || '');
+          const addr = [profile.address, profile.city, profile.state, profile.pincode].filter(Boolean).join(', ');
+          this.businessAddress.set(addr);
+
+          // If creating new quotation, pre-fill default template & terms/notes from profile
+          if (!this.id) {
+            if (!this.templateId && profile.defaultTemplateId) {
+              this.selectedTemplateId.set(profile.defaultTemplateId);
+            }
+            if (profile.defaultTerms && !this.termsAndConditions()) {
+              this.termsAndConditions.set(profile.defaultTerms);
+            }
+            if (profile.defaultFooterNotes && !this.footerNotes()) {
+              this.footerNotes.set(profile.defaultFooterNotes);
+            }
+          }
+        }
+      },
+      error: () => {}
+    });
   }
 
   loadCustomers(): void {
@@ -138,9 +182,13 @@ export class QuotationFormComponent implements OnInit {
       next: (q) => {
         this.quotationId.set(q.quotationNumber || q.id);
         this.selectedContactId.set(q.contactId || '');
+        if (q.customerName) this.customerName.set(q.customerName);
+        if (q.customerPhone) this.customerPhone.set(q.customerPhone);
         if (q.templateId) this.selectedTemplateId.set(q.templateId);
         if (q.quotationDate) this.quotationDate.set(q.quotationDate);
         if (q.dueDate) this.dueDate.set(q.dueDate);
+        if (q.termsAndConditions) this.termsAndConditions.set(q.termsAndConditions);
+        if (q.footerNotes) this.footerNotes.set(q.footerNotes);
         if (q.discountPercentage) this.discountPercentage.set(q.discountPercentage);
 
         if (q.items && q.items.length > 0) {
@@ -225,7 +273,7 @@ export class QuotationFormComponent implements OnInit {
     this.isReviewMode.update(v => !v);
   }
 
-  saveQuotation(previewImmediately = false): void {
+  saveQuotation(status: 'draft' | 'sent' = 'sent', previewImmediately = false): void {
     const validItems = this.items().filter(i => i.itemDescription && (i.quantity ?? 0) > 0);
     if (validItems.length === 0) {
       this.snackBar.open('Please add at least one line item with description and quantity.', 'Close', { duration: 4000 });
@@ -251,6 +299,9 @@ export class QuotationFormComponent implements OnInit {
       templateId: this.selectedTemplateId(),
       quotationDate: this.quotationDate(),
       dueDate: this.dueDate() || undefined,
+      status: status,
+      termsAndConditions: this.termsAndConditions() || undefined,
+      footerNotes: this.footerNotes() || undefined,
       discountPercentage: this.discountPercentage() || 0,
       items: quotationItems
     };
@@ -259,7 +310,8 @@ export class QuotationFormComponent implements OnInit {
       this.quotationService.update(this.id, payload).subscribe({
         next: (res) => {
           this.isSaving.set(false);
-          this.snackBar.open('Quotation updated successfully!', 'Close', { duration: 3000 });
+          const statusLabel = status === 'draft' ? 'saved as Draft' : 'saved successfully';
+          this.snackBar.open(`Quotation ${statusLabel}!`, 'Close', { duration: 3000 });
           if (previewImmediately) {
             this.router.navigate(['/quotations', res.id, 'preview']);
           } else {
@@ -277,7 +329,8 @@ export class QuotationFormComponent implements OnInit {
         next: (res) => {
           this.isSaving.set(false);
           this.quotationId.set(res.quotationNumber || res.id);
-          this.snackBar.open('Quotation created successfully!', 'Close', { duration: 3000 });
+          const statusLabel = status === 'draft' ? 'saved as Draft' : 'saved successfully';
+          this.snackBar.open(`Quotation ${statusLabel}!`, 'Close', { duration: 3000 });
           if (previewImmediately) {
             this.router.navigate(['/quotations', res.id, 'preview']);
           } else {

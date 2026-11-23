@@ -57,8 +57,8 @@ export class ProfileComponent implements OnInit {
     contactNumber: '',
     gstin: '',
     address: '',
-    selectedTemplateId: 'template4',
-    termsAndConditions: '1. Prices valid for 15 days.\n2. 50% advance required.\n3. GST as applicable.',
+    selectedTemplateId: 'fabrication',
+    termsAndConditions: '1. Prices valid for 15 days.\n2. 50% advance required along with purchase order.\n3. GST as applicable.',
     footerNotes: 'Thank you for your business. For queries, contact us at the number above.'
   });
 
@@ -87,13 +87,17 @@ export class ProfileComponent implements OnInit {
     const payload: any = {};
     if (field === 'contactNumber') {
       payload['phone'] = value;
+    } else if (field === 'termsAndConditions') {
+      payload['defaultTerms'] = value;
+    } else if (field === 'footerNotes') {
+      payload['defaultFooterNotes'] = value;
     } else {
       payload[field] = value;
     }
 
     this.businessService.updateProfile(payload).subscribe({
       next: () => {
-        this.snackBar.open('Saved', undefined, { duration: 1500 });
+        this.snackBar.open('Profile saved', undefined, { duration: 1500 });
       },
       error: () => {
         this.snackBar.open('Saved locally', undefined, { duration: 1500 });
@@ -124,7 +128,10 @@ export class ProfileComponent implements OnInit {
 
   selectTemplate(templateId: string): void {
     this.profile.update(p => ({ ...p, selectedTemplateId: templateId }));
-    this.snackBar.open('Default template updated', undefined, { duration: 1500 });
+    this.businessService.updateProfile({ defaultTemplateId: templateId }).subscribe({
+      next: () => this.snackBar.open('Default template set and saved to profile!', undefined, { duration: 2000 }),
+      error: () => this.snackBar.open('Default template updated locally', undefined, { duration: 2000 })
+    });
   }
 
   openAccountSettings(): void {
@@ -171,7 +178,10 @@ export class ProfileComponent implements OnInit {
             contactNumber: b.phone || p.contactNumber,
             gstin: b.gstin || p.gstin,
             address: b.address || p.address,
-            logoUrl: b.logoUrl || p.logoUrl
+            logoUrl: b.logoUrl || p.logoUrl,
+            selectedTemplateId: b.defaultTemplateId || p.selectedTemplateId,
+            termsAndConditions: b.defaultTerms || p.termsAndConditions,
+            footerNotes: b.defaultFooterNotes || p.footerNotes
           }));
         }
       },
@@ -200,14 +210,13 @@ export class ProfileComponent implements OnInit {
         console.error('Error loading templates:', error);
         // Fallback to static templates if backend fails
         this.templates.set([
-          { id: 'template1', name: 'Template1', thumbnailUrl: 'assets/templates/template1-thumb.png' },
-          { id: 'template2', name: 'Template2', thumbnailUrl: 'assets/templates/template2-thumb.png' },
-          { id: 'template3', name: 'Template3', thumbnailUrl: 'assets/templates/template3-thumb.png' },
-          { id: 'template4', name: 'Template4', thumbnailUrl: 'assets/templates/template4-thumb.png' },
-          { id: 'template5', name: 'Template5', thumbnailUrl: 'assets/templates/template5-thumb.png' }
+          { id: 'fabrication', name: 'Fabrication Work Quotation', thumbnailUrl: 'assets/templates/fabrication-thumb.png' },
+          { id: 'job-work', name: 'Job Work Quotation', thumbnailUrl: 'assets/templates/job-work-thumb.png' },
+          { id: 'service', name: 'Service Quotation', thumbnailUrl: 'assets/templates/service-thumb.png' },
+          { id: 'supply', name: 'Supply Quotation', thumbnailUrl: 'assets/templates/supply-thumb.png' },
+          { id: 'maintenance', name: 'Maintenance Quotation', thumbnailUrl: 'assets/templates/maintenance-thumb.png' }
         ]);
         this.isLoadingTemplates.set(false);
-        this.snackBar.open('Using default templates (backend unavailable)', 'Close', { duration: 3000 });
       }
     });
   }

@@ -22,6 +22,9 @@ public class Business {
     private String country;
     private String pincode;
     private String logoUrl;
+    private String defaultTemplateId; // e.g. fabrication, job-work, service, supply, maintenance
+    private String defaultTerms;      // default terms and conditions
+    private String defaultFooterNotes;// default footer notes
     private Integer createdBy;
     private java.time.Instant createdOn;
     private Integer updatedBy;
@@ -70,6 +73,15 @@ public class Business {
 
     public String getLogoUrl() { return logoUrl; }
     public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
+
+    public String getDefaultTemplateId() { return defaultTemplateId; }
+    public void setDefaultTemplateId(String defaultTemplateId) { this.defaultTemplateId = defaultTemplateId; }
+
+    public String getDefaultTerms() { return defaultTerms; }
+    public void setDefaultTerms(String defaultTerms) { this.defaultTerms = defaultTerms; }
+
+    public String getDefaultFooterNotes() { return defaultFooterNotes; }
+    public void setDefaultFooterNotes(String defaultFooterNotes) { this.defaultFooterNotes = defaultFooterNotes; }
 
     public Integer getCreatedBy() { return createdBy; }
     public void setCreatedBy(Integer createdBy) { this.createdBy = createdBy; }

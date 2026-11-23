@@ -21,6 +21,9 @@ public class QuotationRequestDto {
     private String priority;
     private String billingAddress;
     private String deliveryAddress;
+    private String status;
+    private String termsAndConditions;
+    private String footerNotes;
     private BigDecimal discountPercentage;
     private List<ItemDto> items;
 
@@ -34,9 +37,12 @@ public class QuotationRequestDto {
         quotation.setBankId(bankId);
         quotation.setQuotationDate(quotationDate);
         quotation.setDueDate(dueDate);
+        quotation.setStatus(status != null && !status.isBlank() ? status : "draft");
         quotation.setPriority(priority);
         quotation.setBillingAddress(billingAddress);
         quotation.setDeliveryAddress(deliveryAddress);
+        quotation.setTermsAndConditions(termsAndConditions);
+        quotation.setFooterNotes(footerNotes);
         quotation.setDiscountPercentage(discountPercentage);
         if (items != null) {
             quotation.setItems(items.stream().map(ItemDto::toEntity).toList());
@@ -51,9 +57,12 @@ public class QuotationRequestDto {
         if (templateId != null) quotation.setTemplateId(templateId);
         if (bankId != null) quotation.setBankId(bankId);
         if (dueDate != null) quotation.setDueDate(dueDate);
+        if (status != null && !status.isBlank()) quotation.setStatus(status);
         if (priority != null) quotation.setPriority(priority);
         if (billingAddress != null) quotation.setBillingAddress(billingAddress);
         if (deliveryAddress != null) quotation.setDeliveryAddress(deliveryAddress);
+        if (termsAndConditions != null) quotation.setTermsAndConditions(termsAndConditions);
+        if (footerNotes != null) quotation.setFooterNotes(footerNotes);
         if (discountPercentage != null) quotation.setDiscountPercentage(discountPercentage);
         if (items != null) {
             quotation.setItems(items.stream().map(ItemDto::toEntity).toList());
@@ -92,6 +101,15 @@ public class QuotationRequestDto {
 
     public String getDeliveryAddress() { return deliveryAddress; }
     public void setDeliveryAddress(String deliveryAddress) { this.deliveryAddress = deliveryAddress; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getTermsAndConditions() { return termsAndConditions; }
+    public void setTermsAndConditions(String termsAndConditions) { this.termsAndConditions = termsAndConditions; }
+
+    public String getFooterNotes() { return footerNotes; }
+    public void setFooterNotes(String footerNotes) { this.footerNotes = footerNotes; }
 
     public BigDecimal getDiscountPercentage() { return discountPercentage; }
     public void setDiscountPercentage(BigDecimal discountPercentage) { this.discountPercentage = discountPercentage; }

@@ -31,6 +31,26 @@
     </mat-card-header>
 
     <mat-card-content class="quotation-card__content">
+      <!-- Business Profile Summary: Quotation Issued By -->
+      <section class="section profile-summary-section" *ngIf="businessName()">
+        <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #1e3a8a;">
+              <mat-icon style="font-size: 18px; width: 18px; height: 18px; color: #2563eb;">business</mat-icon>
+              <span>Quotation Issued By: {{ businessName() }}</span>
+            </div>
+            <span style="font-size: 11px; color: #64748b; font-style: italic;">(Profile Data &amp; Template configured in Profile)</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 12px 20px; font-size: 12px; color: #334155;">
+            <span *ngIf="businessOwner()"><strong>Owner/Signatory:</strong> {{ businessOwner() }}</span>
+            <span *ngIf="businessPhone()"><strong>Contact:</strong> {{ businessPhone() }}</span>
+            <span *ngIf="businessEmail()"><strong>Email:</strong> {{ businessEmail() }}</span>
+            <span *ngIf="businessGstin()"><strong>GSTIN:</strong> {{ businessGstin() }}</span>
+            <span *ngIf="businessAddress()"><strong>Address:</strong> {{ businessAddress() }}</span>
+          </div>
+        </div>
+      </section>
+
       <!-- Template & Date Configuration -->
       <section class="section config-section">
         <h3 class="section-title">
@@ -207,27 +227,73 @@
         </div>
       </section>
 
+      <!-- Terms & Conditions and Notes -->
+      <section class="section notes-section">
+        <h3 class="section-title">
+          <mat-icon class="section-icon">gavel</mat-icon>
+          Terms &amp; Conditions and Footer Notes
+        </h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Terms &amp; Conditions</mat-label>
+            <textarea
+              matInput
+              rows="4"
+              [ngModel]="termsAndConditions()"
+              (ngModelChange)="termsAndConditions.set($event)"
+              placeholder="e.g. 1. Validity: 15 days&#10;2. Payment: 50% advance&#10;3. GST as applicable"
+            ></textarea>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" style="width: 100%;">
+            <mat-label>Footer Notes / Remarks</mat-label>
+            <textarea
+              matInput
+              rows="4"
+              [ngModel]="footerNotes()"
+              (ngModelChange)="footerNotes.set($event)"
+              placeholder="Thank you for your business. For any questions, please reach out to us."
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </section>
+
       <!-- Primary Form Submission Action Bar -->
       <div class="form-submit-actions">
         <button
           mat-stroked-button
           type="button"
-          (click)="saveQuotation(false)"
+          (click)="saveQuotation('draft', false)"
           [disabled]="isSaving()"
         >
           @if (isSaving()) {
             <mat-spinner diameter="18" style="display:inline-block; margin-right: 6px;"></mat-spinner>
           } @else {
-            <mat-icon>save</mat-icon>
+            <mat-icon>drafts</mat-icon>
           }
           Save as Draft
         </button>
 
         <button
           mat-flat-button
+          type="button"
+          (click)="saveQuotation('sent', false)"
+          [disabled]="isSaving()"
+          style="background-color: #2563eb; color: #ffffff;"
+        >
+          @if (isSaving()) {
+            <mat-spinner diameter="18" style="display:inline-block; margin-right: 6px;"></mat-spinner>
+          } @else {
+            <mat-icon>send</mat-icon>
+          }
+          Save Quotation
+        </button>
+
+        <button
+          mat-flat-button
           color="primary"
           type="button"
-          (click)="saveQuotation(true)"
+          (click)="saveQuotation('draft', true)"
           [disabled]="isSaving()"
         >
           @if (isSaving()) {

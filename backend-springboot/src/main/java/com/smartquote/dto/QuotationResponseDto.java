@@ -36,6 +36,8 @@ public class QuotationResponseDto {
     private BigDecimal taxAmount;
     private BigDecimal grandTotal;
     private String pdfUrl;
+    private String termsAndConditions;
+    private String footerNotes;
     private List<ItemDto> items;
     private Instant createdOn;
     private Instant updatedOn;
@@ -69,6 +71,8 @@ public class QuotationResponseDto {
         dto.taxAmount = quotation.getTaxAmount();
         dto.grandTotal = quotation.getGrandTotal();
         dto.pdfUrl = quotation.getPdfUrl();
+        dto.termsAndConditions = quotation.getTermsAndConditions();
+        dto.footerNotes = quotation.getFooterNotes();
         dto.createdOn = quotation.getCreatedOn();
         dto.updatedOn = quotation.getUpdatedOn();
         if (quotation.getItems() != null) {
@@ -104,6 +108,8 @@ public class QuotationResponseDto {
     public BigDecimal getTaxAmount() { return taxAmount; }
     public BigDecimal getGrandTotal() { return grandTotal; }
     public String getPdfUrl() { return pdfUrl; }
+    public String getTermsAndConditions() { return termsAndConditions; }
+    public String getFooterNotes() { return footerNotes; }
     public List<ItemDto> getItems() { return items; }
     public Instant getCreatedOn() { return createdOn; }
     public Instant getUpdatedOn() { return updatedOn; }

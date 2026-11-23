@@ -56,7 +56,27 @@ public class QuotationService {
                 .orElseThrow(() -> new IllegalArgumentException("Contact not found: " + quotation.getContactId()));
 
         quotation.setQuotationNumber(generateQuotationNumber());
-        quotation.setStatus("draft");
+        if (quotation.getStatus() == null || quotation.getStatus().isBlank()) {
+            quotation.setStatus("draft");
+        }
+        if (quotation.getTemplateId() == null || quotation.getTemplateId().isBlank()) {
+            quotation.setTemplateId(business.getDefaultTemplateId() != null && !business.getDefaultTemplateId().isBlank()
+                    ? business.getDefaultTemplateId() : "fabrication");
+        }
+        if (quotation.getTermsAndConditions() == null || quotation.getTermsAndConditions().isBlank()) {
+            quotation.setTermsAndConditions(business.getDefaultTerms());
+        }
+        if (quotation.getFooterNotes() == null || quotation.getFooterNotes().isBlank()) {
+            quotation.setFooterNotes(business.getDefaultFooterNotes());
+        }
+        if (quotation.getCustomerName() == null || quotation.getCustomerName().isBlank()) {
+            String name = (contact.getCompanyName() != null && !contact.getCompanyName().isBlank())
+                    ? contact.getCompanyName() : contact.getContactPerson();
+            quotation.setCustomerName(name);
+        }
+        if (quotation.getCustomerPhone() == null || quotation.getCustomerPhone().isBlank()) {
+            quotation.setCustomerPhone(contact.getPhone());
+        }
         quotation.setIsDeleted(false);
         quotation.setCreatedOn(Instant.now());
         if (quotation.getQuotationDate() == null) {
@@ -84,6 +104,11 @@ public class QuotationService {
         if (updatedFields.getBillingAddress() != null) existing.setBillingAddress(updatedFields.getBillingAddress());
         if (updatedFields.getDeliveryAddress() != null) existing.setDeliveryAddress(updatedFields.getDeliveryAddress());
         if (updatedFields.getDiscountPercentage() != null) existing.setDiscountPercentage(updatedFields.getDiscountPercentage());
+        if (updatedFields.getStatus() != null && !updatedFields.getStatus().isBlank()) existing.setStatus(updatedFields.getStatus());
+        if (updatedFields.getTermsAndConditions() != null) existing.setTermsAndConditions(updatedFields.getTermsAndConditions());
+        if (updatedFields.getFooterNotes() != null) existing.setFooterNotes(updatedFields.getFooterNotes());
+        if (updatedFields.getCustomerName() != null) existing.setCustomerName(updatedFields.getCustomerName());
+        if (updatedFields.getCustomerPhone() != null) existing.setCustomerPhone(updatedFields.getCustomerPhone());
         if (updatedFields.getItems() != null) existing.setItems(updatedFields.getItems());
 
         Business business = businessRepository.findById(existing.getBusinessId())

@@ -18,6 +18,9 @@ export interface BusinessEntity {
   country?: string;
   pincode?: string;
   logoUrl?: string | null;
+  defaultTemplateId?: string;
+  defaultTerms?: string;
+  defaultFooterNotes?: string;
   status?: string;
 }
 

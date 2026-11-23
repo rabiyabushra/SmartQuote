@@ -185,26 +185,29 @@
     <table class="header-table">
         <tr>
             <td style="width: 55%;">
-                <div class="brand-title" th:text="${business != null and business.businessName != null ? business.businessName : 'EQUIPMENT MAINTENANCE SERVICES'}">MAINTENANCE SERVICES</div>
-                <div class="business-sub">
-                    <span th:if="${business != null and business.address != null}" th:text="${business.address} + ', '">Service Depot, </span>
-                    <span th:if="${business != null and business.city != null}" th:text="${business.city} + ' - '">Secunderabad, </span>
-                    <span th:if="${business != null and business.state != null}" th:text="${business.state}">Telangana</span>
-                    <span th:if="${business != null and business.pincode != null}" th:text="' - ' + ${business.pincode}"> - 500003</span>
+                <div class="brand-title" th:text="${business != null and business.businessName != null ? business.businessName : ''}"></div>
+                <div class="business-sub" th:if="${business != null and business.ownerName != null}">
+                    <strong>Owner / Contact:</strong> <span th:text="${business.ownerName}"></span>
+                </div>
+                <div class="business-sub" th:if="${business != null and (business.address != null or business.city != null or business.state != null or business.pincode != null)}">
+                    <span th:if="${business.address != null}" th:text="${business.address}"></span><span th:if="${business.address != null and (business.city != null or business.state != null)}">, </span>
+                    <span th:if="${business.city != null}" th:text="${business.city}"></span><span th:if="${business.city != null and business.state != null}">, </span>
+                    <span th:if="${business.state != null}" th:text="${business.state}"></span>
+                    <span th:if="${business.pincode != null}" th:text="' - ' + ${business.pincode}"></span>
                 </div>
                 <div class="business-sub">
-                    <span th:if="${business != null and business.phone != null}">Helpdesk: <span th:text="${business.phone}">+91 40 2780 0000</span> | </span>
-                    <span th:if="${business != null and business.email != null}">Email: <span th:text="${business.email}">support@maintenance.com</span></span>
+                    <span th:if="${business != null and business.phone != null}">Phone: <span th:text="${business.phone}"></span><span th:if="${business.email != null}"> | </span></span>
+                    <span th:if="${business != null and business.email != null}">Email: <span th:text="${business.email}"></span></span>
                 </div>
                 <div class="business-sub" th:if="${business != null and business.gstin != null}">
-                    <strong>GSTIN:</strong> <span th:text="${business.gstin}">36AAAAA0000A1Z2</span>
+                    <strong>GSTIN:</strong> <span th:text="${business.gstin}"></span>
                 </div>
             </td>
             <td class="quote-badge" style="width: 45%;">
                 <div class="doc-title">AMC / MAINTENANCE QUOTATION</div>
-                <div class="quote-meta"><strong>Contract Quote Ref:</strong> <span th:text="${quotation.quotationNumber}">MC-2026-0001</span></div>
-                <div class="quote-meta"><strong>Date:</strong> <span th:text="${quotation.quotationDate != null ? quotation.quotationDate : generatedOn}">21 Nov 2026</span></div>
-                <div class="quote-meta" th:if="${quotation.dueDate != null}"><strong>Offer Valid Till:</strong> <span th:text="${quotation.dueDate}">05 Dec 2026</span></div>
+                <div class="quote-meta"><strong>Contract Quote Ref:</strong> <span th:text="${quotation.quotationNumber}"></span></div>
+                <div class="quote-meta"><strong>Date:</strong> <span th:text="${quotation.quotationDate != null ? quotation.quotationDate : generatedOn}"></span></div>
+                <div class="quote-meta" th:if="${quotation.dueDate != null}"><strong>Offer Valid Till:</strong> <span th:text="${quotation.dueDate}"></span></div>
                 <div class="quote-meta"><strong>GST Applicability:</strong> <span th:text="${quotation.isInterstate != null and quotation.isInterstate ? 'Inter-State (IGST 18%)' : 'Intra-State (CGST 9% + SGST 9%)'}">Intra-State</span></div>
             </td>
         </tr>
@@ -214,20 +217,29 @@
         <tr>
             <td>
                 <div class="party-header">Maintenance Contractor</div>
-                <div style="font-weight: bold; font-size: 11px;" th:text="${business != null and business.businessName != null ? business.businessName : 'Maintenance Contractor'}">Contractor Name</div>
-                <div th:if="${business != null and business.ownerName != null}">Service Manager: <span th:text="${business.ownerName}">Manager</span></div>
-                <div th:if="${business != null and business.address != null}" th:text="${business.address}">Address</div>
-                <div th:if="${business != null and business.phone != null}">Phone: <span th:text="${business.phone}">Phone</span></div>
-                <div th:if="${business != null and business.state != null}">State: <span th:text="${business.state}">Telangana</span></div>
+                <div style="font-weight: bold; font-size: 11px;" th:text="${business != null and business.businessName != null ? business.businessName : ''}"></div>
+                <div th:if="${business != null and business.ownerName != null}">Owner / Signatory: <span th:text="${business.ownerName}"></span></div>
+                <div th:if="${business != null and business.address != null}" th:text="${business.address}"></div>
+                <div th:if="${business != null and (business.city != null or business.state != null)}">
+                    <span th:if="${business.city != null}" th:text="${business.city} + ', '"></span>
+                    <span th:if="${business.state != null}" th:text="${business.state}"></span>
+                    <span th:if="${business.pincode != null}" th:text="' - ' + ${business.pincode}"></span>
+                </div>
+                <div th:if="${business != null and business.phone != null}">Phone: <span th:text="${business.phone}"></span></div>
+                <div th:if="${business != null and business.email != null}">Email: <span th:text="${business.email}"></span></div>
+                <div th:if="${business != null and business.gstin != null}"><strong>GSTIN:</strong> <span th:text="${business.gstin}"></span></div>
             </td>
             <td>
                 <div class="party-header">Equipment Owner / Client</div>
-                <div style="font-weight: bold; font-size: 11px;" th:text="${contact != null and contact.companyName != null ? contact.companyName : (contact != null and contact.contactPerson != null ? contact.contactPerson : (quotation.billingAddress != null ? quotation.billingAddress : 'Client Organization'))}">Client Organization</div>
-                <div th:if="${contact != null and contact.contactPerson != null and contact.companyName != null}">Attention: <span th:text="${contact.contactPerson}">Contact Person</span></div>
-                <div th:if="${contact != null and contact.phone != null}">Phone: <span th:text="${contact.phone}">+91 9876543210</span></div>
-                <div th:if="${contact != null and contact.email != null}">Email: <span th:text="${contact.email}">facilities@client.com</span></div>
-                <div th:if="${contact != null and contact.gstin != null}"><strong>GSTIN:</strong> <span th:text="${contact.gstin}">36ABCDE1234F1Z2</span></div>
-                <div th:if="${contact != null and contact.state != null}">Site State: <span th:text="${contact.state}">Telangana</span></div>
+                <div style="font-weight: bold; font-size: 11px;" th:text="${quotation.customerName != null and !#strings.isEmpty(quotation.customerName) ? quotation.customerName : (contact != null and contact.companyName != null ? contact.companyName : (contact != null and contact.contactPerson != null ? contact.contactPerson : 'Client Organization'))}">Client Organization</div>
+                <div th:if="${contact != null and contact.contactPerson != null and contact.companyName != null and !contact.contactPerson.equals(quotation.customerName)}">Attention: <span th:text="${contact.contactPerson}"></span></div>
+                <div th:if="${quotation.customerPhone != null and !#strings.isEmpty(quotation.customerPhone)}">Phone: <span th:text="${quotation.customerPhone}"></span></div>
+                <div th:if="${(quotation.customerPhone == null or #strings.isEmpty(quotation.customerPhone)) and contact != null and contact.phone != null}">Phone: <span th:text="${contact.phone}"></span></div>
+                <div th:if="${contact != null and contact.email != null}">Email: <span th:text="${contact.email}"></span></div>
+                <div th:if="${contact != null and contact.gstin != null}"><strong>GSTIN:</strong> <span th:text="${contact.gstin}"></span></div>
+                <div th:if="${quotation.billingAddress != null and !#strings.isEmpty(quotation.billingAddress)}"><span th:text="${quotation.billingAddress}"></span></div>
+                <div th:if="${(quotation.billingAddress == null or #strings.isEmpty(quotation.billingAddress)) and contact != null and contact.address != null}"><span th:text="${contact.address}"></span></div>
+                <div th:if="${contact != null and contact.state != null}">Site State: <span th:text="${contact.state}"></span></div>
             </td>
         </tr>
     </table>
@@ -270,12 +282,14 @@
                     <div><strong>IFSC Code:</strong> <span th:text="${bankDetails.ifscCode}">IFSC00000</span></div>
                 </div>
 
-                <div class="terms-box">
-                    <div class="box-title">AMC Maintenance Terms</div>
-                    <div>1. Preventive Visits: 4 scheduled quarterly visits + unlimited breakdown support.</div>
-                    <div>2. Response Time: 4 hours for critical downtime; next business day for regular calls.</div>
-                    <div>3. Spare Parts: Non-consumable spares included; physical damage/water logging excluded.</div>
-                    <div>4. Contract Payment: 50% on contract commencement; remaining 50% at mid-term (6 months).</div>
+                <div class="terms-box" th:if="${(quotation.termsAndConditions != null and !#strings.isEmpty(quotation.termsAndConditions)) or (business != null and business.defaultTerms != null and !#strings.isEmpty(business.defaultTerms))}">
+                    <div class="box-title">Terms &amp; Conditions</div>
+                    <div style="white-space: pre-line;" th:text="${quotation.termsAndConditions != null and !#strings.isEmpty(quotation.termsAndConditions) ? quotation.termsAndConditions : business.defaultTerms}"></div>
+                </div>
+
+                <div class="terms-box" style="margin-top: 6px;" th:if="${(quotation.footerNotes != null and !#strings.isEmpty(quotation.footerNotes)) or (business != null and business.defaultFooterNotes != null and !#strings.isEmpty(business.defaultFooterNotes))}">
+                    <div class="box-title">Notes / Remarks</div>
+                    <div style="white-space: pre-line;" th:text="${quotation.footerNotes != null and !#strings.isEmpty(quotation.footerNotes) ? quotation.footerNotes : business.defaultFooterNotes}"></div>
                 </div>
             </td>
             <td class="totals-col">
@@ -317,9 +331,9 @@
                 <div>Authorized Signatory</div>
             </td>
             <td style="width: 50%; text-align: right;">
-                <div>For <strong th:text="${business != null and business.businessName != null ? business.businessName : 'Maintenance Services'}">Maintenance Services</strong></div>
+                <div>For <strong th:text="${business != null and business.businessName != null ? business.businessName : 'Authorized Signatory'}">Authorized Signatory</strong></div>
                 <br /><br />
-                <div>Authorized Signatory</div>
+                <div th:text="${business != null and business.ownerName != null ? business.ownerName : 'Authorized Signatory'}">Authorized Signatory</div>
             </td>
         </tr>
     </table>

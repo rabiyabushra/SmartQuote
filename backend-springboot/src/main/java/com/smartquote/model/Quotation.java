@@ -42,6 +42,8 @@ public class Quotation {
     private BigDecimal grandTotal;       // subtotal + taxAmount - discountAmount
 
     private String pdfUrl;
+    private String termsAndConditions;
+    private String footerNotes;
 
     private List<QuotationItem> items;   // embedded — replaces QUOTATION_ITEMS table
 
@@ -207,6 +209,12 @@ public class Quotation {
 
     public String getPdfUrl() { return pdfUrl; }
     public void setPdfUrl(String pdfUrl) { this.pdfUrl = pdfUrl; }
+
+    public String getTermsAndConditions() { return termsAndConditions; }
+    public void setTermsAndConditions(String termsAndConditions) { this.termsAndConditions = termsAndConditions; }
+
+    public String getFooterNotes() { return footerNotes; }
+    public void setFooterNotes(String footerNotes) { this.footerNotes = footerNotes; }
 
     public List<QuotationItem> getItems() { return items; }
     public void setItems(List<QuotationItem> items) { this.items = items; }

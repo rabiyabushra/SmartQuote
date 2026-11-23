@@ -49,6 +49,9 @@ public class BusinessController {
         if (updated.getCountry() != null) business.setCountry(updated.getCountry());
         if (updated.getPincode() != null) business.setPincode(updated.getPincode());
         if (updated.getLogoUrl() != null) business.setLogoUrl(updated.getLogoUrl());
+        if (updated.getDefaultTemplateId() != null) business.setDefaultTemplateId(updated.getDefaultTemplateId());
+        if (updated.getDefaultTerms() != null) business.setDefaultTerms(updated.getDefaultTerms());
+        if (updated.getDefaultFooterNotes() != null) business.setDefaultFooterNotes(updated.getDefaultFooterNotes());
 
         business.setUpdatedOn(Instant.now());
         Business saved = businessRepository.save(business);

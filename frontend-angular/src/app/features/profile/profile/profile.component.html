@@ -156,7 +156,10 @@
     <div class="panel-title">Quotation Template Information</div>
 
     <div class="template-section">
-      <label class="field-label">Template Selection</label>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+        <label class="field-label" style="font-weight: 600;">Default Quotation Template</label>
+        <span style="font-size: 11px; color: #16a34a; font-weight: 500;">Click to fix as default quotation template</span>
+      </div>
       <div class="template-grid">
         <button
           type="button"
@@ -169,6 +172,7 @@
             <img [src]="template.thumbnailUrl" [alt]="template.name" />
           </div>
           <span class="template-name">{{ template.name }}</span>
+          <span *ngIf="profile().selectedTemplateId === template.id" style="font-size: 10px; color: #16a34a; font-weight: 700; text-transform: uppercase;">Default</span>
         </button>
       </div>
     </div>

@@ -12,6 +12,9 @@ export interface BusinessProfile {
   contactNumber: string;
   gstin: string;
   address: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
   selectedTemplateId: string;
   termsAndConditions: string;
   footerNotes: string;

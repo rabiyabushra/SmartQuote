@@ -23,6 +23,9 @@ export interface QuotationRequest {
   priority?: string;
   billingAddress?: string;
   deliveryAddress?: string;
+  status?: string;
+  termsAndConditions?: string;
+  footerNotes?: string;
   discountPercentage?: number;
   items: QuotationItemDto[];
 }
@@ -42,6 +45,8 @@ export interface QuotationResponse {
   priority?: string;
   billingAddress?: string;
   deliveryAddress?: string;
+  termsAndConditions?: string;
+  footerNotes?: string;
   isInterstate?: boolean;
   subtotal: number;
   discountPercentage?: number;
